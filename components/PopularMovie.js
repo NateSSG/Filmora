@@ -70,8 +70,8 @@ const PopularMovie = ({ movies, genres }) => {
     dots: true,
     infinite: false,
     speed: 500,
-    slidesToShow: 5, // Increased number of slides to show
-    slidesToScroll: 5, // Increased number of slides to scroll
+    slidesToShow: 5,
+    slidesToScroll: 5,
     responsive: [
       {
         breakpoint: 1280,
@@ -85,7 +85,7 @@ const PopularMovie = ({ movies, genres }) => {
         settings: {
           slidesToShow: 3,
           slidesToScroll: 3,
-        }
+        } 
       },
       {
         breakpoint: 768,
@@ -101,7 +101,8 @@ const PopularMovie = ({ movies, genres }) => {
           slidesToScroll: 1,
         }
       }
-    ]
+    ],
+    variableWidth: true,
   };
 
   console.log("Rendering. Categories:", categories);
@@ -144,9 +145,9 @@ const PopularMovie = ({ movies, genres }) => {
         Object.entries(categories).map(([category, categoryMovies]) => (
           <div key={category} className="mb-8">
             <h2 className="text-2xl font-bold text-white mb-4">{category}</h2>
-            <Slider {...sliderSettings}>
+            <Slider {...sliderSettings} className="left-aligned-slider">
               {categoryMovies.map((movie) => (
-                <div key={movie.id} className="px-2">
+                <div key={movie.id} className="pr-4">
                   <MovieCard movie={movie} />
                   <p className="text-white text-sm mt-2">Age: {movie.certification}</p>
                 </div>

@@ -34,3 +34,27 @@ body {
   background: linear-gradient(360deg, #1eff00, #ff0000);
 }
 
+
+/* Add this at the end of the file */
+.center-slider .slick-track {
+  display: flex;
+  justify-content: center;
+}
+
+.center-slider .slick-slide {
+  float: none;
+}
+
+.left-aligned-slider .slick-track {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.left-aligned-slider .slick-slide {
+  width: auto !important;
+}
+
+.left-aligned-slider .slick-list {
+  overflow: hidden;
+}
+

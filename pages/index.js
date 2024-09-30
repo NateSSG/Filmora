@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import Meta from '../components/Meta';
 
-export default function Home() {
+const Home = ({ movies }) => {
   return (
     <div className="bg-gray-900 min-h-screen text-white">
       <Meta title="Home" />
@@ -25,6 +25,10 @@ export default function Home() {
         <p className="mb-5">
           Whether you're a casual moviegoer or a die-hard cinephile, MovieExplorer has something for everyone.
         </p>
+        <div className="container mx-auto px-4 py-8">
+  
+          
+        </div>
         <Link href="/movies">
           <a className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             Explore Movies
@@ -33,4 +37,6 @@ export default function Home() {
       </div>
     </div>
   );
-}
+};
+
+export default Home;
