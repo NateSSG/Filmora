@@ -12,6 +12,7 @@ const PopularMovie = ({ movies, genres }) => {
   const [filteredMovies, setFilteredMovies] = useState([]);
   const router = useRouter(); // Initialize the router
   const [categories, setCategories] = useState({});
+  const [topPicks, setTopPicks] = useState([]);
 
   useEffect(() => {
     console.log("useEffect triggered");
@@ -50,6 +51,10 @@ const PopularMovie = ({ movies, genres }) => {
 
     setCategories(categorizedMovies);
     setFilteredMovies(movies);
+
+    // Select random top 10 picks
+    const shuffled = [...movies].sort(() => 0.5 - Math.random());
+    setTopPicks(shuffled.slice(0, 10));
   }, [movies, genres]);
 
   const handleSearchChange = (e) => {
@@ -74,35 +79,40 @@ const PopularMovie = ({ movies, genres }) => {
     slidesToScroll: 5,
     responsive: [
       {
-        breakpoint: 1280,
+        breakpoint: 1536,
         settings: {
           slidesToShow: 4,
           slidesToScroll: 4,
         }
       },
       {
-        breakpoint: 1024,
+        breakpoint: 1280,
         settings: {
           slidesToShow: 3,
           slidesToScroll: 3,
-        } 
+        }
       },
       {
-        breakpoint: 768,
+        breakpoint: 1024,
         settings: {
           slidesToShow: 2,
           slidesToScroll: 2,
         }
       },
       {
-        breakpoint: 480,
+        breakpoint: 640,
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
         }
       }
     ],
-    variableWidth: true,
+  };
+
+  const topPicksSettings = {
+    ...sliderSettings,
+    slidesToShow: 5,
+    slidesToScroll: 5,
   };
 
   console.log("Rendering. Categories:", categories);
@@ -133,28 +143,38 @@ const PopularMovie = ({ movies, genres }) => {
       </div>
       
       {searchTerm ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           {filteredMovies.map((movie) => (
-            <div key={movie.id}>
+            <div key={movie.id} className="w-full">
               <MovieCard movie={movie} />
-              <p className="text-white text-sm mt-2">Age: {movie.certification}</p>
             </div>
           ))}
         </div>
       ) : (
-        Object.entries(categories).map(([category, categoryMovies]) => (
-          <div key={category} className="mb-8">
-            <h2 className="text-2xl font-bold text-white mb-4">{category}</h2>
-            <Slider {...sliderSettings} className="left-aligned-slider">
-              {categoryMovies.map((movie) => (
-                <div key={movie.id} className="pr-4">
+        <>
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-white mb-4">Top 10 Picks</h2>
+            <Slider {...topPicksSettings} className="left-aligned-slider">
+              {topPicks.map((movie) => (
+                <div key={movie.id} className="px-3">
                   <MovieCard movie={movie} />
-                  <p className="text-white text-sm mt-2">Age: {movie.certification}</p>
                 </div>
               ))}
             </Slider>
           </div>
-        ))
+          {Object.entries(categories).map(([category, categoryMovies]) => (
+            <div key={category} className="mb-8">
+              <h2 className="text-2xl font-bold text-white mb-4">{category}</h2>
+              <Slider {...sliderSettings} className="left-aligned-slider">
+                {categoryMovies.map((movie) => (
+                  <div key={movie.id} className="px-3">
+                    <MovieCard movie={movie} />
+                  </div>
+                ))}
+              </Slider>
+            </div>
+          ))}
+        </>
       )}
     </div>
   );
