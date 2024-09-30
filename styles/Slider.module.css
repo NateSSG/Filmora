@@ -1,0 +1,22 @@
+.slider {
+  display: flex;
+  overflow: hidden;
+  width: 1000px;
+  height: 600px;
+}
+
+.slide {
+  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s ease;
+}
+
+.current {
+  z-index: 1;
+}
+
+.imageContainer {
+  max-width: 870px;
+  height: 600px;
+}

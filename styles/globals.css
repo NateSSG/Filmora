@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-black
+}
+
+.font-cursive {
+  font-family: cursive, cursive;
+}
+
+
+.cover:hover::before {
+  box-shadow: 0 0 0 2000px rgba(0, 0, 0, 0.4);
+}
+
+.gradient-text {
+  background: linear-gradient(to right, #ff5f6d, #ffc371);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.main-bg {
+  background: linear-gradient(180deg, #ff0000, #1eff00);
+  transition: background 1s ease;
+}
+
+.main-bg:hover {
+  background: linear-gradient(360deg, #1eff00, #ff0000);
+}
+
