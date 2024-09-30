@@ -11,10 +11,15 @@ const Navbar = () => {
         </Link>
 
         <Link href="/movies" passHref>
-          <a className="text-base text-center md:text-2xl ml-5 hover:text-red-600">
-            Movies
-          </a>
-        </Link>
+            <a className="text-base text-center md:text-2xl ml-5 hover:text-red-600">
+              Movies
+            </a>
+          </Link>
+          <Link href="/all" passHref>
+            <a className="text-base text-center md:text-2xl ml-5 hover:text-red-600">
+              All
+            </a>
+          </Link>
       </div>
     </nav>
   );

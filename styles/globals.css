@@ -59,7 +59,21 @@ body {
 
 /* Add these styles at the end of the file */
 
+.movie-slider .slick-track {
+  display: flex !important;
+}
+
+.movie-slider .slick-slide {
+  height: auto;
+}
+
+.movie-slider .slick-slide > div {
+  height: 100%;
+}
+
 .movie-card {
+  width: 200px; /* Adjust this value to set the desired width of your movie cards */
+  margin-right: 16px; /* Adjust this value to control spacing between cards */
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -68,7 +82,7 @@ body {
 
 .movie-card:hover {
   transform: translateY(-10px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
 }
 
 .movie-card .relative {
@@ -83,14 +97,6 @@ body {
   transition: transform 0.3s ease-in-out;
 }
 
-.movie-card:hover .bg-opacity-0 {
-  background-color: rgba(0, 0, 0, 0.6);
-}
-
-.movie-card:hover .opacity-0 {
-  opacity: 1;
-}
-
 /* Add this new class for text truncation */
 .line-clamp-2 {
   display: -webkit-box;
@@ -100,18 +106,6 @@ body {
 }
 
 /* Add or update these styles */
-
-.movie-slider .slick-track {
-  display: flex !important;
-}
-
-.movie-slider .slick-slide {
-  height: auto;
-}
-
-.movie-slider .slick-slide > div {
-  height: 100%;
-}
 
 .movie-slider .slick-list {
   overflow: visible;

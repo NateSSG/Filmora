@@ -30,7 +30,7 @@ const Movie = ({ movie, trailer, watchProviders }) => {
 
   const handleNextCard = () => {
     setNextCardVisible(true);
-    setTimeout(() => setNextCardVisible(false), 1000); // Hide after 1 second
+    setTimeout(() => setNextCardVisible(false), 1000);
   };
 
   useEffect(() => {
@@ -46,6 +46,27 @@ const Movie = ({ movie, trailer, watchProviders }) => {
     fetchBackdrops();
   }, [movie.id]);
 
+  const renderProviders = (providers, title) => {
+    if (!providers || providers.length === 0) return null;
+    return (
+      <div className="mt-3">
+        <h3 className="text-white text-lg font-semibold mb-2">{title}</h3>
+        <div className="flex flex-wrap gap-2">
+          {providers.map((provider) => (
+            <div key={provider.provider_id} className="flex items-center bg-gray-800 rounded-full px-3 py-1">
+              <img 
+                src={`https://image.tmdb.org/t/p/original${provider.logo_path}`} 
+                alt={provider.provider_name}
+                className="w-6 h-6 rounded-full mr-2"
+              />
+              <span className="text-white text-sm">{provider.provider_name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div
       className={`container max-w-4xl overflow-hidden mx-auto pt-6 bg-black pb-6 rounded-2xl mt-8 transition-opacity duration-500 ${
@@ -56,10 +77,9 @@ const Movie = ({ movie, trailer, watchProviders }) => {
       <div className="px-3">
         <Slider slides={backdrops} />
         <h1 className="font-bold text-xl text-red-600 my-2">{movie.title}</h1>
-        {/* Replace the TypeAnimation with a simple paragraph */}
         <p className="text-white text-sm mb-4">{movie.overview}</p>
 
-        <p className="mt-5 text-white -600 text-sm">
+        <p className="mt-5 text-white text-sm">
           Genres:{" "}
           <span className="font-bold">
             {movie.genres.map((genre) => genre.name).join(", ")}
@@ -72,20 +92,15 @@ const Movie = ({ movie, trailer, watchProviders }) => {
         {/* Streaming Information */}
         <div className="mt-5">
           <h2 className="font-bold text-lg text-red-600 mb-2">Where to Watch</h2>
-          {watchProviders ? (
-            <div className="flex flex-wrap gap-2">
-              {watchProviders.flatrate && watchProviders.flatrate.map((provider) => (
-                <div key={provider.provider_id} className="flex items-center bg-gray-800 rounded-full px-3 py-1">
-                  <img 
-                    src={`https://image.tmdb.org/t/p/original${provider.logo_path}`} 
-                    alt={provider.provider_name}
-                    className="w-6 h-6 rounded-full mr-2"
-                  />
-                  <span className="text-white text-sm">{provider.provider_name}</span>
-                </div>
-              ))}
-              {!watchProviders.flatrate && <p className="text-white text-sm">No streaming options found.</p>}
-            </div>
+          {watchProviders && watchProviders.results && watchProviders.results.US ? (
+            <>
+              {renderProviders(watchProviders.results.US.flatrate, "Stream")}
+              {renderProviders(watchProviders.results.US.rent, "Rent")}
+              {renderProviders(watchProviders.results.US.buy, "Buy")}
+              {!watchProviders.results.US.flatrate && !watchProviders.results.US.rent && !watchProviders.results.US.buy && (
+                <p className="text-white text-sm">No streaming options found.</p>
+              )}
+            </>
           ) : (
             <p className="text-white text-sm">Streaming information not available.</p>
           )}
@@ -145,6 +160,8 @@ export async function getServerSideProps({ params }) {
     const movieRes = await axios.get(`${API_URL}/movie/${id}?api_key=${API_KEY}&language=en-US`);
     const certificationRes = await axios.get(`${API_URL}/movie/${id}/release_dates?api_key=${API_KEY}`);
     const trailerRes = await axios.get(`${API_URL}/movie/${id}/videos?api_key=${API_KEY}&language=en-US`);
+    const watchProvidersResponse = await axios.get(`${API_URL}/movie/${id}/watch/providers?api_key=${API_KEY}`);
+    const watchProviders = watchProvidersResponse.data;
 
     const movie = movieRes.data;
     const releaseDates = certificationRes.data.results;
@@ -155,11 +172,7 @@ export async function getServerSideProps({ params }) {
     const trailer = trailers.find(video => video.type === "Trailer") || null;
 
     return {
-      props: { 
-        movie: { ...movie, certification },
-        trailer,
-        watchProviders: null // You might want to fetch this data as well
-      }
+      props: { movie, trailer, watchProviders }
     };
   } catch (error) {
     console.error('Error fetching movie data:', error);
