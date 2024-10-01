@@ -6,6 +6,7 @@ import Slider from 'react-slick';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/solid';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { useRouter } from 'next/router';
 
 const AllMovies = () => {
   const [allMovies, setAllMovies] = useState([]);
@@ -13,6 +14,36 @@ const AllMovies = () => {
   const [genres, setGenres] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const router = useRouter();
+
+  useEffect(() => {
+    const savedScrollPosition = sessionStorage.getItem('scrollPosition');
+    if (savedScrollPosition) {
+      setScrollPosition(parseInt(savedScrollPosition));
+      window.scrollTo(0, parseInt(savedScrollPosition));
+    }
+    
+    const savedPage = sessionStorage.getItem('currentPage');
+    if (savedPage) {
+      setPage(parseInt(savedPage));
+    }
+
+    fetchMovies();
+    fetchGenres();
+
+    const handleRouteChange = () => {
+      sessionStorage.setItem('scrollPosition', window.pageYOffset.toString());
+      sessionStorage.setItem('currentPage', page.toString());
+    };
+
+    router.events.on('routeChangeStart', handleRouteChange);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  }, []);
+
 
   const fetchMovies = async () => {
     if (loading) return;
@@ -130,6 +161,7 @@ const AllMovies = () => {
       setLoading(false);
     };
 
+
     return (
       <div className="mb-10">
         <h2 className="text-accent text-2xl font-bold mb-4">{title}</h2>
@@ -151,7 +183,7 @@ const AllMovies = () => {
     <div className="bg-gradient-to-b from-gray-900 to-black min-h-screen">
       <Meta title="All Movies" />
       <div className="container max-w-7xl mx-auto pt-16 pb-20 px-4">
-        <h1 className="text-accent text-5xl font-bold mb-10 text-center">All Movies</h1>
+        <h1 className="text-accent text-5xl font-bold mb-10 text-center">Movies</h1>
         <CategorySlider title="All Movies" movies={allMovies} isAllMovies={true} genreId={null} />
         
         {Object.entries(categorizedMovies).map(([category, movies]) => (
@@ -169,5 +201,6 @@ const AllMovies = () => {
     </div>
   );
 };
+
 
 export default AllMovies;

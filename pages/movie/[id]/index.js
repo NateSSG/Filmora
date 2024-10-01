@@ -19,6 +19,7 @@ const Movie = ({ movie, trailer, watchProviders }) => {
     setShowPlayer(true);
   };
 
+
   const handleGoBack = () => {
     const previousPage = sessionStorage.getItem("previousPage");
     if (previousPage) {
@@ -54,8 +55,8 @@ const Movie = ({ movie, trailer, watchProviders }) => {
         <div className="flex flex-wrap gap-2">
           {providers.map((provider) => (
             <div key={provider.provider_id} className="flex items-center bg-gray-800 rounded-full px-3 py-1">
-              <img 
-                src={`https://image.tmdb.org/t/p/original${provider.logo_path}`} 
+              <img
+                src={`https://image.tmdb.org/t/p/original${provider.logo_path}`}
                 alt={provider.provider_name}
                 className="w-6 h-6 rounded-full mr-2"
               />
@@ -82,13 +83,11 @@ const Movie = ({ movie, trailer, watchProviders }) => {
               </p>
             </div>
           </div>
-          
           <div className="p-6">
             <div className="flex flex-col md:flex-row gap-8">
               <div className="md:w-2/3">
                 <h2 className="text-2xl font-semibold text-primary-light mb-4">Overview</h2>
                 <p className="text-gray-300 mb-6">{movie.overview}</p>
-                
                 <h2 className="text-2xl font-semibold text-primary-light mb-4">Where to Watch</h2>
                 {watchProviders && watchProviders.results && watchProviders.results.US ? (
                   <>
@@ -105,11 +104,9 @@ const Movie = ({ movie, trailer, watchProviders }) => {
               </div>
             </div>
           </div>
-
           <h1 className="font-bold text-xl ml-5 text-primary-light  mt-6 my-2">
             Movie trailer:
           </h1>
-
           <div className="flex justify-center mt-10 rounded-xl">
             {trailer && trailer.key ? (
               <ReactPlayer
@@ -123,7 +120,6 @@ const Movie = ({ movie, trailer, watchProviders }) => {
               <p className="text-white text-sm">Trailer not available.</p>
             )}
           </div>
-
           <div className="mt-8 flex justify-center">
             <button
               onClick={handleGoBack}
