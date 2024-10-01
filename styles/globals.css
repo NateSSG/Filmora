@@ -5,7 +5,19 @@
 @tailwind utilities;
 
 body {
-  @apply bg-black
+  @apply bg-background text-gray-200;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply font-bold text-white;
+}
+
+a {
+  @apply text-primary-light hover:text-primary transition-colors duration-200;
+}
+
+button {
+  @apply bg-primary hover:bg-primary-dark text-white font-bold py-2 px-4 rounded transition-colors duration-200;
 }
 
 .font-cursive {
@@ -104,22 +116,3 @@ body {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-
-/* Add or update these styles */
-
-.movie-slider .slick-list {
-  overflow: visible;
-}
-
-/* Center alignment for 1-2 movies */
-.movie-slider.slick-initialized[data-slick-slidestoshow="1"],
-.movie-slider.slick-initialized[data-slick-slidestoshow="2"] {
-  display: flex;
-  justify-content: center;
-}
-
-/* Left alignment for 3+ movies */
-.movie-slider.slick-initialized:not([data-slick-slidestoshow="1"]):not([data-slick-slidestoshow="2"]) .slick-track {
-  margin-left: 0 !important;
-}
-

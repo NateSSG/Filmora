@@ -2,24 +2,24 @@ import Link from 'next/link';
 
 const Navbar = () => {
   return (
-    <nav className="bg-black border-black border-2 shadow-black">
-      <div className="font-bold shadow-2xl text-neutral-100 p-4 max-w-7xl mx-auto container tracking-widest font-neue">
-        <Link href="/" passHref>
-          <a className="text-base md:text-2xl">
-            Nathaniel <span className="text-red-600">Ssendagire</span>
-          </a>
-        </Link>
-
-        <Link href="/movies" passHref>
-            <a className="text-base text-center md:text-2xl ml-5 hover:text-red-600">
-              Movies
-            </a>
-          </Link>
-          <Link href="/all" passHref>
-            <a className="text-base text-center md:text-2xl ml-5 hover:text-red-600">
-              All
-            </a>
-          </Link>
+    <nav className="bg-background-light shadow-md">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          <div className="flex">
+            <Link href="/">
+              <a className="flex-shrink-0 flex items-center">
+                <span className="text-2xl font-bold text-primary-light">Filmiora</span>
+              </a>
+            </Link>
+            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+              <Link href="/all">
+                <a className="border-transparent text-gray-300 hover:border-primary-light hover:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                  Movies
+                </a>
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
     </nav>
   );

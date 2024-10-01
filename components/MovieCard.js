@@ -8,8 +8,8 @@ const MovieCard = ({ movie }) => {
 
   return (
     <Link href={`/movie/${movie.id}`}>
-      <div className="movie-card bg-gray-900 rounded-lg overflow-hidden shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl flex flex-col w-full h-full">
-        <div className="relative w-full pb-[120%]"> {/* Reduced from 150% to 120% */}
+      <div className="bg-background-light rounded-lg overflow-hidden shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl flex flex-col w-full h-full">
+        <div className="relative w-full pb-[150%]">
           <Image
             src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
             alt={movie.title}
@@ -18,27 +18,27 @@ const MovieCard = ({ movie }) => {
             className="transition-opacity duration-300"
           />
           <div className="absolute inset-0 bg-black bg-opacity-0 hover:cursor-pointer hover:bg-opacity-60 transition-all duration-300 flex items-center justify-center opacity-0 hover:opacity-100">
-            <p className="text-white text-center px-4 py-2 bg-red-600 rounded-md text-sm font-bold">
+            <p className="text-white text-center px-4 py-2 bg-primary rounded-md text-sm font-bold">
               View Details
             </p>
           </div>
         </div>
-        <div className="p-4 pb-6 flex-grow flex flex-col justify-between"> {/* Added pb-6 for extra bottom padding */}
+        <div className="p-4 flex-grow flex flex-col justify-between">
           <div>
             <h3 className="text-lg font-semibold text-white line-clamp-2">{movie.title}</h3>
             <p className="text-sm text-gray-400 mt-1">
-              {movie.release_date} 
+              {movie.release_date}
               {movie.certification && (
-                <span className="ml-2 px-1 py-0.5 bg-blue-600 text-white text-xs rounded">
+                <span className="ml-2 px-1 py-0.5 bg-secondary text-white text-xs rounded">
                   {movie.certification}
                 </span>
               )}
             </p>
           </div>
-          <div className="bg-blue-900 rounded-md px-2 py-1 mt-2 inline-block">
+          <div className="bg-background rounded-md px-2 py-1 mt-2 inline-block">
             <div className="flex items-center">
               {[...Array(5)].map((_, index) => (
-                <span key={index} className="text-yellow-400 text-xl">
+                <span key={index} className="text-accent text-xl">
                   {index < fullStars ? "★" : index === fullStars && hasHalfStar ? "½" : "☆"}
                 </span>
               ))}

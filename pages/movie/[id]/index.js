@@ -68,83 +68,86 @@ const Movie = ({ movie, trailer, watchProviders }) => {
   };
 
   return (
-    <div
-      className={`container max-w-4xl overflow-hidden mx-auto pt-6 bg-black pb-6 rounded-2xl mt-8 transition-opacity duration-500 ${
-        nextCardVisible ? "opacity-50" : "opacity-100"
-      }`}
-    >
+    <div className="bg-gradient-to-b from-background to-background-dark min-h-screen py-12">
       <Meta title={movie.title} />
-      <div className="px-3">
-        <Slider slides={backdrops} />
-        <h1 className="font-bold text-xl text-red-600 my-2">{movie.title}</h1>
-        <p className="text-white text-sm mb-4">{movie.overview}</p>
+      <div className="container max-w-6xl mx-auto px-4">
+        <div className="bg-background-light rounded-xl overflow-hidden shadow-2xl">
+          <div className="relative h-96">
+            <Slider slides={backdrops} />
+            <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+            <div className="absolute bottom-0 left-0 p-6">
+              <h1 className="text-4xl font-bold text-white mb-2">{movie.title}</h1>
+              <p className="text-gray-300 text-sm">
+                {movie.release_date} | {movie.genres.map((genre) => genre.name).join(", ")}
+              </p>
+            </div>
+          </div>
+          
+          <div className="p-6">
+            <div className="flex flex-col md:flex-row gap-8">
+              <div className="md:w-2/3">
+                <h2 className="text-2xl font-semibold text-primary-light mb-4">Overview</h2>
+                <p className="text-gray-300 mb-6">{movie.overview}</p>
+                
+                <h2 className="text-2xl font-semibold text-primary-light mb-4">Where to Watch</h2>
+                {watchProviders && watchProviders.results && watchProviders.results.US ? (
+                  <>
+                    {renderProviders(watchProviders.results.US.flatrate, "Stream")}
+                    {renderProviders(watchProviders.results.US.rent, "Rent")}
+                    {renderProviders(watchProviders.results.US.buy, "Buy")}
+                    {!watchProviders.results.US.flatrate && !watchProviders.results.US.rent && !watchProviders.results.US.buy && (
+                      <p className="text-white text-sm">No streaming options found.</p>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-white text-sm">Streaming information not available.</p>
+                )}
+              </div>
+            </div>
+          </div>
 
-        <p className="mt-5 text-white text-sm">
-          Genres:{" "}
-          <span className="font-bold">
-            {movie.genres.map((genre) => genre.name).join(", ")}
-          </span>
-        </p>
-        <p className="text-white text-sm">
-          Release Date: <span className="font-bold">{movie.release_date}</span>
-        </p>
+          <h1 className="font-bold text-xl ml-5 text-primary-light  mt-6 my-2">
+            Movie trailer:
+          </h1>
 
-        {/* Streaming Information */}
-        <div className="mt-5">
-          <h2 className="font-bold text-lg text-red-600 mb-2">Where to Watch</h2>
-          {watchProviders && watchProviders.results && watchProviders.results.US ? (
-            <>
-              {renderProviders(watchProviders.results.US.flatrate, "Stream")}
-              {renderProviders(watchProviders.results.US.rent, "Rent")}
-              {renderProviders(watchProviders.results.US.buy, "Buy")}
-              {!watchProviders.results.US.flatrate && !watchProviders.results.US.rent && !watchProviders.results.US.buy && (
-                <p className="text-white text-sm">No streaming options found.</p>
-              )}
-            </>
-          ) : (
-            <p className="text-white text-sm">Streaming information not available.</p>
-          )}
-        </div>
-
-        <h1 className="font-bold text-xl text-red-600 mt-6 my-2">
-          Movie trailer:
-        </h1>
-
-        <div className="flex justify-center mt-5 rounded-xl">
-          {trailer && trailer.key ? (
-            <ReactPlayer
-              url={`https://www.youtube.com/watch?v=${trailer.key}`}
-              width={800}
-              height={600}
-              controls
-              style={{ padding: 0 }}
-            />
-          ) : (
-            <p className="text-white text-sm">Trailer not available.</p>
-          )}
-        </div>
-
-        <div className="mt-5 flex justify-center">
-          <button
-            onClick={handleGoBack}
-            className="px-4 py-2 rounded-md bg-black font-bold text-white hover:bg-red-700 flex items-center space-x-2"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              className="h-5 w-5"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          <div className="flex justify-center mt-10 rounded-xl">
+            {trailer && trailer.key ? (
+              <ReactPlayer
+                url={`https://www.youtube.com/watch?v=${trailer.key}`}
+                width={800}
+                height={600}
+                controls
+                style={{ padding: 0 }}
               />
-            </svg>
-            <span>Go back</span>
-          </button>
+            ) : (
+              <p className="text-white text-sm">Trailer not available.</p>
+            )}
+          </div>
+
+          <div className="mt-8 flex justify-center">
+            <button
+              onClick={handleGoBack}
+              className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-primary to-secondary p-0.5 text-sm font-medium text-white hover:text-white focus:outline-none focus:ring-4 focus:ring-primary"
+            >
+              <span className="relative flex items-center space-x-2 rounded-full bg-background px-5 py-2.5 transition-all duration-75 ease-in group-hover:bg-opacity-0">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  className="h-5 w-5"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                  />
+                </svg>
+                <span>Go back</span>
+              </span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
