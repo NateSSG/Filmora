@@ -5,7 +5,7 @@ export default async function handler(req, res) {
 
   try {
     const API_URL = process.env.API_URL || 'https://api.themoviedb.org/3';
-    const API_KEY = process.env.API_KEY || '7f4278b49b0dad56afbecf67d0b4a002';
+    const API_KEY = process.env.API_KEY;
 
     const response = await axios.get(
       `${API_URL}/discover/movie`,

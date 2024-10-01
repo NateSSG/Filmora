@@ -12,6 +12,7 @@ const AllMovies = () => {
   const [allMovies, setAllMovies] = useState([]);
   const [categorizedMovies, setCategorizedMovies] = useState({});
   const [genres, setGenres] = useState([]);
+  const [selectedGenre, setSelectedGenre] = useState(null);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -49,13 +50,26 @@ const AllMovies = () => {
     if (loading) return;
     setLoading(true);
     try {
-      const response = await axios.get(`/api/movies?page=${page}`);
-      setAllMovies(prevMovies => [...prevMovies, ...response.data.results]);
+      const response = await axios.get(`/api/movies`, {
+        params: {
+          page: page,
+          with_genres: selectedGenre
+        }
+      });
+      if (selectedGenre) {
+        setCategorizedMovies(prevState => ({
+          ...prevState,
+          [genres.find(genre => genre.id === selectedGenre)?.name]: response.data.results
+        }));
+      } else {
+        setAllMovies(prevMovies => [...new Set([...prevMovies, ...response.data.results])]);
+      }
       setPage(prevPage => prevPage + 1);
     } catch (error) {
       console.error('Error fetching movies:', error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const fetchGenres = async () => {
@@ -96,6 +110,19 @@ const AllMovies = () => {
     }
   }, [genres]);
 
+  useEffect(() => {
+    setAllMovies([]);
+    setCategorizedMovies({});
+    setPage(1);
+    fetchMovies();
+  }, [selectedGenre]);
+
+  useEffect(() => {
+    setAllMovies([]);
+    setPage(1);
+    fetchMovies();
+  }, [selectedGenre]);
+
   const CategorySlider = ({ title, movies: initialMovies, isAllMovies, genreId }) => {
     const categorySliderRef = useRef(null);
     const [movies, setMovies] = useState(initialMovies);
@@ -135,7 +162,7 @@ const AllMovies = () => {
         }
       ],
       beforeChange: (current, next) => {
-        if (next + 5 >= movies.length - 5) {
+        if (next + 5 >= movies.length - 5 && !loading) {
           fetchMoreMovies();
         }
       }
@@ -154,13 +181,15 @@ const AllMovies = () => {
         if (uniqueNewMovies.length > 0) {
           setMovies(prevMovies => [...prevMovies, ...uniqueNewMovies]);
           setCurrentPage(nextPage);
+        } else {
+          console.log('No new unique movies found');
         }
       } catch (error) {
         console.error('Error fetching more movies:', error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
-
 
     return (
       <div className="mb-10">
@@ -184,18 +213,41 @@ const AllMovies = () => {
       <Meta title="All Movies" />
       <div className="container max-w-7xl mx-auto pt-16 pb-20 px-4">
         <h1 className="text-accent text-5xl font-bold mb-10 text-center">Movies</h1>
-        <CategorySlider title="All Movies" movies={allMovies} isAllMovies={true} genreId={null} />
-        
-        {Object.entries(categorizedMovies).map(([category, movies]) => (
+        <div className="mb-8">
+          <h2 className="text-2xl font-semibold text-accent mb-4">Filter by Genre:</h2>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setSelectedGenre(null)}
+              className={`px-4 py-2 rounded ${
+                !selectedGenre ? 'bg-primary text-white' : 'bg-gray-700 text-gray-300'
+              }`}
+            >
+              All
+            </button>
+            {genres.map((genre) => (
+              <button
+                key={genre.id}
+                onClick={() => setSelectedGenre(genre.id)}
+                className={`px-4 py-2 rounded ${
+                  selectedGenre === genre.id ? 'bg-primary text-white' : 'bg-gray-700 text-gray-300'
+                }`}
+              >
+                {genre.name}
+              </button>
+            ))}
+          </div>
+        </div>
+        {!selectedGenre && (
+          <CategorySlider title="All Movies" movies={allMovies} isAllMovies={true} genreId={null} />
+        )}
+        {selectedGenre && (
           <CategorySlider 
-            key={category} 
-            title={category} 
-            movies={movies} 
-            isAllMovies={false} 
-            genreId={genres.find(genre => genre.name === category)?.id}
+            title={genres.find(genre => genre.id === selectedGenre)?.name || "Selected Genre"}
+            movies={categorizedMovies[genres.find(genre => genre.id === selectedGenre)?.name] || []}
+            isAllMovies={false}
+            genreId={selectedGenre}
           />
-        ))}
-
+        )}
         {loading && <p className="text-center mt-8 text-accent">Loading...</p>}
       </div>
     </div>
