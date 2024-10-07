@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import Meta from '../components/Meta';
-import Hero from '../components/Hero';
-import TopPicksSuggester from '../components/TopPicksSuggester';
-import { FaSearch, FaStar, FaFilm, FaUserPlus } from 'react-icons/fa';
-import PopularMovie from '../components/PopularMovie';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import Meta from "../components/Meta";
+import Hero from "../components/Hero";
+import TopPicksSuggester from "../components/TopPicksSuggester";
+import { FaSearch, FaStar, FaFilm, FaUserPlus } from "react-icons/fa";
+import PopularMovie from "../components/PopularMovie";
+import axios from "axios";
 
 const Home = () => {
   const [popularMovies, setPopularMovies] = useState([]);
@@ -14,11 +14,11 @@ const Home = () => {
   useEffect(() => {
     const fetchPopularMovies = async () => {
       try {
-        const response = await axios.get('/api/movies?page=1');
+        const response = await axios.get("/api/movies?page=1");
         setPopularMovies(response.data.results);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching popular movies:', error);
+        console.error("Error fetching popular movies:", error);
         setLoading(false);
       }
     };
@@ -28,13 +28,19 @@ const Home = () => {
 
   return (
     <div className="bg-gradient-to-b from-background to-background-dark min-h-screen text-white">
-      <Meta title="MovieExplorer - Your Ultimate Movie Destination" description="Discover the world of cinema with MovieExplorer. We bring you the latest and greatest in film, from blockbuster hits to indie gems." />
+      <Meta
+        title="MovieExplorer - Your Ultimate Movie Destination"
+        description="Discover the world of cinema with MovieExplorer. We bring you the latest and greatest in film, from blockbuster hits to indie gems."
+      />
       <Hero />
       <div className="container max-w-6xl mx-auto pb-20 px-4">
         <section className="mt-16 mb-20">
-          <h1 className="text-5xl font-bold mb-6 text-center text-primary-light">Welcome to Filmiora</h1>
+          <h1 className="text-5xl font-bold mb-6 text-center text-primary-light">
+            Welcome to Filmiora
+          </h1>
           <p className="text-xl mb-8 text-center max-w-3xl mx-auto">
-            Discover the world of cinema with Filmiora. We bring you the latest and greatest in film, from blockbuster hits to indie gems.
+            Discover the world of cinema with Filmiora. We bring you the latest
+            and greatest in film, from blockbuster hits to indie gems.
           </p>
           <div className="flex justify-center">
             <Link href="/all">
@@ -46,19 +52,21 @@ const Home = () => {
         </section>
 
         <section className="mb-20">
-          <h2 className="text-3xl font-semibold mb-8 text-center text-accent">Why Choose Filmiora?</h2>
+          <h2 className="text-3xl font-semibold mb-8 text-center text-accent">
+            Why Choose Filmiora?
+          </h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <FeatureCard 
+            <FeatureCard
               icon={<FaFilm className="text-4xl mb-4 text-primary-light" />}
               title="Extensive Library"
               description="Access thousands of movies across all genres and eras."
             />
-            <FeatureCard 
+            <FeatureCard
               icon={<FaStar className="text-4xl mb-4 text-primary-light" />}
               title="Personalized Recommendations"
               description="Get movie suggestions tailored to your taste and viewing history."
             />
-            <FeatureCard 
+            <FeatureCard
               icon={<FaSearch className="text-4xl mb-4 text-primary-light" />}
               title="Advanced Search"
               description="Find exactly what you're looking for with our powerful search tools."
@@ -67,17 +75,17 @@ const Home = () => {
         </section>
 
         <section className="mb-20">
-          <h2 className="text-3xl font-semibold mb-8 text-center text-accent">Popular Movies</h2>
+          <h2 className="text-3xl font-semibold mb-8 text-center text-accent">
+            Popular Movies
+          </h2>
           {loading ? (
             <div className="flex justify-center items-center h-64">
               <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-primary-light"></div>
             </div>
+          ) : popularMovies.length > 0 ? (
+            <PopularMovie movies={popularMovies} />
           ) : (
-            popularMovies.length > 0 ? (
-              <PopularMovie movies={popularMovies} />
-            ) : (
-              <p className="text-center text-white">No popular movies found.</p>
-            )
+            <p className="text-center text-white">No popular movies found.</p>
           )}
           <div className="text-center mt-8">
             <Link href="/all">
@@ -89,12 +97,16 @@ const Home = () => {
         </section>
 
         <section className="mb-20">
-          <h2 className="text-3xl font-semibold mb-8 text-center text-accent">Top Picks for You</h2>
+          <h2 className="text-3xl font-semibold mb-8 text-center text-accent">
+            Top Picks for You
+          </h2>
           <TopPicksSuggester />
         </section>
 
         <section className="text-center">
-          <h2 className="text-3xl font-semibold mb-6 text-accent">Ready to Start Your Movie Journey?</h2>
+          <h2 className="text-3xl font-semibold mb-6 text-accent">
+            Ready to Start Your Movie Journey?
+          </h2>
           <p className="text-xl mb-8">
             Join Filmiora today and unlock a world of cinematic wonders!
           </p>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import validateApiRequest from '../utils/validator'; // Import the validator
 import MovieCard from '../components/MovieCard';
 import Meta from '../components/Meta';
 import Slider from 'react-slick';
@@ -48,8 +49,8 @@ const AllMovies = () => {
   useEffect(() => {
     const savedGenre = sessionStorage.getItem('selectedGenre');
     if (savedGenre) {
-      const genreId = parseInt(savedGenre);
-      setSelectedGenre(genreId); // Set the selected genre from sessionStorage
+      const genreId = parseInt(savedGenre, 10);
+      setSelectedGenre(isNaN(genreId) ? null : genreId); // Default to null if NaN
       fetchMovies(); // Fetch movies immediately after setting the genre
     }
   }, []);
@@ -63,31 +64,49 @@ const AllMovies = () => {
   }, [selectedGenre]);
 
   const fetchMovies = async () => {
-    if (loading) return;
-    setLoading(true);
+    if (loading) return; // Prevent multiple fetch calls
+    setLoading(true); // Set loading to true before fetching
     try {
-      const response = await axios.get(`/api/movies`, {
-        params: {
-          page: page,
-          with_genres: selectedGenre ? selectedGenre : undefined // Only include selectedGenre if it's set
-        }
-      });
-      console.log('Fetched movies:', response.data); // Log the response data
+      let allFetchedMovies = [];
+      let currentPage = page; // Start from the current page
+      let totalFetched = 0;
+
+      // Fetch movies until we have at least 70 or there are no more pages
+      while (totalFetched < 70) {
+        const response = await axios.get(`/api/movies`, {
+          params: {
+            page: currentPage,
+            with_genres: selectedGenre ? selectedGenre : undefined
+          }
+        });
+
+        // Add the fetched movies to the array
+        allFetchedMovies = [...allFetchedMovies, ...response.data.results];
+        totalFetched += response.data.results.length;
+
+        // Break if there are no more movies to fetch
+        if (response.data.results.length < 20) break; // If less than 20 results, stop fetching
+
+        currentPage++; // Move to the next page
+      }
+
+   
+
       if (selectedGenre) {
         // Set categorized movies only for the selected genre
         setCategorizedMovies(prevState => ({
           ...prevState,
-          [genres.find(genre => genre.id === selectedGenre)?.name]: response.data.results
+          [genres.find(genre => genre.id === selectedGenre)?.name]: allFetchedMovies
         }));
         setAllMovies([]); // Clear allMovies when a genre is selected
       } else {
-        setAllMovies(prevMovies => [...new Set([...prevMovies, ...response.data.results])]);
+        setAllMovies(prevMovies => [...new Set([...prevMovies, ...allFetchedMovies])]);
       }
-      setPage(prevPage => prevPage + 1);
+      setPage(currentPage); // Update the page state
     } catch (error) {
       console.error('Error fetching movies:', error);
     } finally {
-      setLoading(false);
+      setLoading(false); // Reset loading state after fetching
     }
   };
 
@@ -150,6 +169,15 @@ const AllMovies = () => {
     const categorySliderRef = useRef(null);
     const [movies, setMovies] = useState(initialMovies);
     const [currentPage, setCurrentPage] = useState(1);
+    const isMounted = useRef(true); // Track if the component is mounted
+
+    useEffect(() => {
+      isMounted.current = true; // Set to true when the component mounts
+
+      return () => {
+        isMounted.current = false; // Set to false when the component unmounts
+      };
+    }, []);
 
     const sliderSettings = {
       dots: false,
@@ -185,7 +213,7 @@ const AllMovies = () => {
         }
       ],
       beforeChange: (current, next) => {
-        if (next + 5 >= movies.length && !loading) {
+        if (next + 5 >= movies.length - 5 && !loading) {
           fetchMoreMovies();
         }
       }
@@ -196,23 +224,25 @@ const AllMovies = () => {
       setLoading(true);
       try {
         const nextPage = currentPage + 1;
-        const response = await axios.get(`/api/movies/genre/${genreId}`, {
-          params: { page: nextPage }
-        });
+        const response = await axios.get(isAllMovies ? `/api/movies?page=${nextPage}` : `/api/movies/genre/${genreId}?page=${nextPage}`);
         const newMovies = response.data.results;
-
+        
         const uniqueNewMovies = newMovies.filter(newMovie => !movies.some(existingMovie => existingMovie.id === newMovie.id));
-
+        
         if (uniqueNewMovies.length > 0) {
-          setMovies(prevMovies => [...prevMovies, ...uniqueNewMovies]);
-          setCurrentPage(nextPage);
+          if (isMounted.current) { // Check if the component is still mounted
+            setMovies(prevMovies => [...prevMovies, ...uniqueNewMovies]);
+            setCurrentPage(nextPage);
+          }
         } else {
           console.log('No new unique movies found');
         }
       } catch (error) {
         console.error('Error fetching more movies:', error);
       } finally {
-        setLoading(false);
+        if (isMounted.current) { // Check if the component is still mounted
+          setLoading(false);
+        }
       }
     };
 
@@ -282,6 +312,5 @@ const AllMovies = () => {
     </div>
   );
 };
-
 
 export default AllMovies;

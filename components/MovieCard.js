@@ -3,7 +3,7 @@ import Link from "next/link";
 import { FaStar } from 'react-icons/fa';
 
 const MovieCard = ({ movie }) => {
-  const rating = movie.vote_average.toFixed(1);
+  const rating = movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A';
 
   return (
     <Link href={`/movie/${movie.id}`} shallow={true}>
