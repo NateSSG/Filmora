@@ -90,8 +90,6 @@ const AllMovies = () => {
         currentPage++; // Move to the next page
       }
 
-   
-
       if (selectedGenre) {
         // Set categorized movies only for the selected genre
         setCategorizedMovies(prevState => ({
@@ -180,14 +178,14 @@ const AllMovies = () => {
     }, []);
 
     const sliderSettings = {
-      dots: false,
+      dots: false, // Set this to false to remove the dots
       infinite: true,
-      speed: isAllMovies ? 5000 : 500,
+      speed: 300, // Reduced speed for smoother transitions
       slidesToShow: 5,
       slidesToScroll: 1,
-      autoplay: isAllMovies,
-      autoplaySpeed: isAllMovies ? 0 : 3000,
-      cssEase: isAllMovies ? "linear" : "ease-in-out",
+      autoplay: true,
+      autoplaySpeed: 2000, // Adjusted for a better user experience
+      cssEase: "ease-in-out",
       pauseOnHover: true,
       responsive: [
         {

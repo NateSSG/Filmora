@@ -10,7 +10,7 @@ const PopularMovie = ({ movies }) => {
   }
 
   const settings = {
-    dots: true,
+    dots: false, // Set this to false to remove the dots
     infinite: true,
     speed: 500,
     slidesToShow: 5,
