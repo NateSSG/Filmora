@@ -58,7 +58,7 @@ export default function Movies({ initialMovies, genres }) {
 export async function getServerSideProps() {
   try {
     const API_URL = process.env.API_URL || 'https://api.themoviedb.org/3';
-    const API_KEY = process.env.API_KEY;
+    const API_KEY = process.env.API_KEY || '7f4278b49b0dad56afbecf67d0b4a002';
 
     const movieResponse = await axios.get(`${API_URL}/movie/popular?api_key=${API_KEY}&language=en-US&page=1`);
     const genreResponse = await axios.get(`${API_URL}/genre/movie/list?api_key=${API_KEY}&language=en-US`);

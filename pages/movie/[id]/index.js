@@ -107,25 +107,25 @@ const Movie = ({ movie, trailer, watchProviders }) => {
           <h1 className="font-bold text-xl ml-5 text-primary-light  mt-6 my-2">
             Movie trailer:
           </h1>
-          <div className="flex justify-center mt-10 rounded-xl">
+          <div className="relative w-full" style={{ paddingTop: '56.25%' }}> {/* 16:9 Aspect Ratio */}
             {trailer && trailer.key ? (
               <ReactPlayer
                 url={`https://www.youtube.com/watch?v=${trailer.key}`}
-                width={800}
-                height={600}
+                width="100%"
+                height="100%" // Set height to 100% to fill the wrapper
+                style={{ position: 'absolute', top: 0, left: 0 }} // Positioning to fill the wrapper
                 controls
-                style={{ padding: 0 }}
               />
             ) : (
               <p className="text-white text-sm">Trailer not available.</p>
             )}
           </div>
-          <div className="mt-8 flex justify-center">
+          <div className="mt-8 mb-10 flex justify-center">
             <button
               onClick={handleGoBack}
               className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-primary to-secondary p-0.5 text-sm font-medium text-white hover:text-white focus:outline-none focus:ring-4 focus:ring-primary"
             >
-              <span className="relative flex items-center space-x-2 rounded-full bg-background px-5 py-2.5 transition-all duration-75 ease-in group-hover:bg-opacity-0">
+              <span className="relative flex items-center space-x-2 rounded-full bg-background px-28 py-2.5 transition-all duration-75 ease-in group-hover:bg-opacity-0">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"

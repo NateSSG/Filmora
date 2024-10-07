@@ -18,7 +18,7 @@ const Hero = () => {
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full">
         <TypeAnimation
           sequence={[
-            "Welcome to Nate's Movies",
+            "Welcome to Filmiora",
             2000,
             "Discover Amazing Films",
             2000,
@@ -30,9 +30,9 @@ const Hero = () => {
           repeat={Infinity}
           style={{ fontSize: "2.5em", fontWeight: "bold", color: "white" }}
         />
-        <p className="text-red-600 text-xl mt-4 font-bold">Explore the world of cinema with us.</p>
+        <p className="text-primary-light text-xl mt-4 font-bold">Explore the world of cinema with us.</p>
         <Link href="/all" passHref>
-          <button className="bg-red-600 hover:bg-red-700 text-white py-3 px-6 rounded-full text-lg mt-6 font-bold transition duration-300 ease-in-out transform hover:scale-105">
+          <button className="bg-primary-light hover:bg-red-700 text-white py-3 px-6 rounded-full text-lg mt-6 font-bold transition duration-300 ease-in-out transform hover:scale-105">
             EXPLORE MOVIES
           </button>
         </Link>

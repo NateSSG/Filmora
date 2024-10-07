@@ -17,7 +17,7 @@ const MovieCard = ({ movie }) => {
             className="transition-opacity duration-300"
           />
           <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-70 transition-all duration-300 flex items-center justify-center opacity-0 hover:opacity-100">
-            <p className="text-white text-center px-4 py-2 bg-primary rounded-full text-sm font-bold">
+            <p className="text-white text-center px-4 py-2 hover:cursor-pointer bg-primary rounded-full text-sm font-bold">
               View Details
             </p>
           </div>

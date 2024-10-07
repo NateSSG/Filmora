@@ -45,6 +45,22 @@ const AllMovies = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const savedGenre = sessionStorage.getItem('selectedGenre');
+    if (savedGenre) {
+      const genreId = parseInt(savedGenre);
+      setSelectedGenre(genreId); // Set the selected genre from sessionStorage
+      fetchMovies(); // Fetch movies immediately after setting the genre
+    }
+  }, []);
+
+  useEffect(() => {
+    sessionStorage.setItem('selectedGenre', selectedGenre); // Store the selected genre in sessionStorage
+    setAllMovies([]); // Clear all movies
+    setCategorizedMovies({}); // Clear categorized movies
+    setPage(1); // Reset page to 1
+    fetchMovies(); // Fetch movies based on the selected genre
+  }, [selectedGenre]);
 
   const fetchMovies = async () => {
     if (loading) return;
@@ -53,14 +69,17 @@ const AllMovies = () => {
       const response = await axios.get(`/api/movies`, {
         params: {
           page: page,
-          with_genres: selectedGenre
+          with_genres: selectedGenre ? selectedGenre : undefined // Only include selectedGenre if it's set
         }
       });
+      console.log('Fetched movies:', response.data); // Log the response data
       if (selectedGenre) {
+        // Set categorized movies only for the selected genre
         setCategorizedMovies(prevState => ({
           ...prevState,
           [genres.find(genre => genre.id === selectedGenre)?.name]: response.data.results
         }));
+        setAllMovies([]); // Clear allMovies when a genre is selected
       } else {
         setAllMovies(prevMovies => [...new Set([...prevMovies, ...response.data.results])]);
       }
@@ -84,7 +103,7 @@ const AllMovies = () => {
   const fetchMoviesByGenre = async (genreId) => {
     try {
       const response = await axios.get(`/api/movies/genre/${genreId}`);
-      return response.data.results;
+      return response.data.results; // Ensure this returns the correct movie data
     } catch (error) {
       console.error(`Error fetching movies for genre ${genreId}:`, error);
       return [];
@@ -98,15 +117,19 @@ const AllMovies = () => {
 
   useEffect(() => {
     const fetchCategorizedMovies = async () => {
-      const categorized = {};
-      for (const genre of genres) {
-        categorized[genre.name] = await fetchMoviesByGenre(genre.id);
-      }
-      setCategorizedMovies(categorized);
+        const categorized = {};
+        try {
+            for (const genre of genres) {
+                categorized[genre.name] = await fetchMoviesByGenre(genre.id);
+            }
+            setCategorizedMovies(categorized);
+        } catch (error) {
+            console.error('Error fetching categorized movies:', error);
+        }
     };
 
     if (genres.length > 0) {
-      fetchCategorizedMovies();
+        fetchCategorizedMovies();
     }
   }, [genres]);
 
@@ -162,7 +185,7 @@ const AllMovies = () => {
         }
       ],
       beforeChange: (current, next) => {
-        if (next + 5 >= movies.length - 5 && !loading) {
+        if (next + 5 >= movies.length && !loading) {
           fetchMoreMovies();
         }
       }
@@ -173,11 +196,13 @@ const AllMovies = () => {
       setLoading(true);
       try {
         const nextPage = currentPage + 1;
-        const response = await axios.get(isAllMovies ? `/api/movies?page=${nextPage}` : `/api/movies/genre/${genreId}?page=${nextPage}`);
+        const response = await axios.get(`/api/movies/genre/${genreId}`, {
+          params: { page: nextPage }
+        });
         const newMovies = response.data.results;
-        
+
         const uniqueNewMovies = newMovies.filter(newMovie => !movies.some(existingMovie => existingMovie.id === newMovie.id));
-        
+
         if (uniqueNewMovies.length > 0) {
           setMovies(prevMovies => [...prevMovies, ...uniqueNewMovies]);
           setCurrentPage(nextPage);
@@ -190,6 +215,10 @@ const AllMovies = () => {
         setLoading(false);
       }
     };
+
+    useEffect(() => {
+      setMovies(initialMovies); // Update movies when initialMovies changes
+    }, [initialMovies]);
 
     return (
       <div className="mb-10">
@@ -220,7 +249,7 @@ const AllMovies = () => {
               onClick={() => setSelectedGenre(null)}
               className={`px-4 py-2 rounded ${
                 !selectedGenre ? 'bg-primary text-white' : 'bg-gray-700 text-gray-300'
-              }`}
+              } text-sm md:text-base`} // Adjust text size for mobile
             >
               All
             </button>
@@ -230,7 +259,7 @@ const AllMovies = () => {
                 onClick={() => setSelectedGenre(genre.id)}
                 className={`px-4 py-2 rounded ${
                   selectedGenre === genre.id ? 'bg-primary text-white' : 'bg-gray-700 text-gray-300'
-                }`}
+                } text-sm md:text-base`} // Adjust text size for mobile
               >
                 {genre.name}
               </button>
