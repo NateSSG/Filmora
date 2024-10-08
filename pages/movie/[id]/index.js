@@ -15,10 +15,18 @@ const Movie = ({ movie, trailer, watchProviders }) => {
   const [backdrops, setBackdrops] = useState([]);
   const [nextCardVisible, setNextCardVisible] = useState(false);
 
+  // Handle case where movie is not found
+  if (!movie) {
+    return (
+      <div className="bg-gradient-to-b from-background to-background-dark min-h-screen flex items-center justify-center">
+        <p className="text-white text-lg">Movie not found. Please check the URL or try again later.</p>
+      </div>
+    );
+  }
+
   const handlePlay = () => {
     setShowPlayer(true);
   };
-
 
   const handleGoBack = () => {
     const previousPage = sessionStorage.getItem("previousPage");
@@ -36,16 +44,18 @@ const Movie = ({ movie, trailer, watchProviders }) => {
 
   useEffect(() => {
     const fetchBackdrops = async () => {
-      const response = await axios.get(
-        `https://api.themoviedb.org/3/movie/${movie.id}/images?include_image_language=en,null&api_key=7f4278b49b0dad56afbecf67d0b4a002`
-      );
-      const backdrops = response.data.backdrops.map(
-        (backdrop) => `${BACKDROP_BASE_URL}${backdrop.file_path}`
-      );
-      setBackdrops(backdrops);
+      if (movie && movie.id) { // Check if movie and movie.id are defined
+        const response = await axios.get(
+          `https://api.themoviedb.org/3/movie/${movie.id}/images?include_image_language=en,null&api_key=7f4278b49b0dad56afbecf67d0b4a002`
+        );
+        const backdrops = response.data.backdrops.map(
+          (backdrop) => `${BACKDROP_BASE_URL}${backdrop.file_path}`
+        );
+        setBackdrops(backdrops);
+      }
     };
     fetchBackdrops();
-  }, [movie.id]);
+  }, [movie]); // Depend on movie object
 
   const renderProviders = (providers, title) => {
     if (!providers || providers.length === 0) return null;
