@@ -7,7 +7,7 @@ const Hero = () => {
     <div className="text-center relative">
       <div className="w-full h-96 relative">
         <Image
-          src="/hero-cinema.jpg"
+          src="/hero-cinema.svg"
           alt="Cinema background"
           layout="fill"
           objectFit="cover"
