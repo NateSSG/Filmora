@@ -13,7 +13,7 @@ const AllMovies = () => {
   const [allMovies, setAllMovies] = useState([]);
   const [categorizedMovies, setCategorizedMovies] = useState({});
   const [genres, setGenres] = useState([]);
-  const [selectedGenre, setSelectedGenre] = useState(null);
+  const [selectedGenre, setSelectedGenre] = useState(genres[0]?.id || 1); // Default to the first genre or a valid ID
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -50,8 +50,10 @@ const AllMovies = () => {
     const savedGenre = sessionStorage.getItem('selectedGenre');
     if (savedGenre) {
       const genreId = parseInt(savedGenre, 10);
-      setSelectedGenre(isNaN(genreId) ? null : genreId); // Default to null if NaN
+      setSelectedGenre(isNaN(genreId) ? genres[0]?.id || 1 : genreId); // Default to the first genre if NaN
       fetchMovies(); // Fetch movies immediately after setting the genre
+    } else {
+      fetchMovies(); // Fetch movies for the default genre
     }
   }, []);
 
@@ -76,7 +78,7 @@ const AllMovies = () => {
         const response = await axios.get(`/api/movies`, {
           params: {
             page: currentPage,
-            with_genres: selectedGenre ? selectedGenre : undefined
+            with_genres: selectedGenre // This will never be null
           }
         });
 
