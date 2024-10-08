@@ -15,15 +15,6 @@ const Movie = ({ movie, trailer, watchProviders }) => {
   const [backdrops, setBackdrops] = useState([]);
   const [nextCardVisible, setNextCardVisible] = useState(false);
 
-  // Handle case where movie is not found
-  if (!movie) {
-    return (
-      <div className="bg-gradient-to-b from-background to-background-dark min-h-screen flex items-center justify-center">
-        <p className="text-white text-lg">Movie not found. Please check the URL or try again later.</p>
-      </div>
-    );
-  }
-
   const handlePlay = () => {
     setShowPlayer(true);
   };
