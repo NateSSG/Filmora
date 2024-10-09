@@ -110,11 +110,6 @@ const Home = () => {
           <p className="text-xl mb-8">
             Join Filmiora today and unlock a world of cinematic wonders!
           </p>
-          <Link href="/signup">
-            <a className="bg-accent hover:bg-accent-dark text-white font-bold py-3 px-8 rounded-lg transition-colors duration-200 inline-flex items-center">
-              <FaUserPlus className="mr-2" /> Sign Up Now
-            </a>
-          </Link>
         </section>
       </div>
     </div>
