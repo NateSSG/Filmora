@@ -11,10 +11,10 @@ const MovieCard = ({ movie }) => {
       <div className="bg-gradient-to-br from-background-light to-background rounded-xl overflow-hidden shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl flex flex-col w-full h-full border border-gray-800">
         <div className="relative w-full pb-[150%]">
           <Image
-            src={posterUrl}
+            src={posterUrl} // Use the Image component
             alt={movie.title}
-            layout="fill"
-            objectFit="cover"
+            layout="fill" // Use layout fill for responsive images
+            objectFit="cover" // Maintain aspect ratio
             className="transition-opacity duration-300"
             onError={(e) => {
               e.target.onerror = null; // prevents looping
