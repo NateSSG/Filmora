@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import ReactPlayer from "react-player";
 import Slider from "../../../components/Slider";
 import Image from "next/image";
+import ReviewModal from '../../../components/ReviewModal';
 
 const BACKDROP_BASE_URL = "https://image.tmdb.org/t/p/original";
 
@@ -14,6 +15,10 @@ const Movie = ({ movie, trailer, watchProviders }) => {
   const [showPlayer, setShowPlayer] = useState(false);
   const [backdrops, setBackdrops] = useState([]);
   const [nextCardVisible, setNextCardVisible] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  const [selectedReview, setSelectedReview] = useState(null); // State for the selected review
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+  const [visibleReviews, setVisibleReviews] = useState(3); // State to control the number of visible reviews
 
   const handlePlay = () => {
     setShowPlayer(true);
@@ -33,9 +38,23 @@ const Movie = ({ movie, trailer, watchProviders }) => {
     setTimeout(() => setNextCardVisible(false), 1000);
   };
 
+  const openModal = (review) => {
+    setSelectedReview(review);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedReview(null);
+  };
+
+  const loadMoreReviews = () => {
+    setVisibleReviews((prev) => prev + 3); // Increase the number of visible reviews by 3
+  };
+
   useEffect(() => {
     const fetchBackdrops = async () => {
-      if (movie && movie.id) { // Check if movie and movie.id are defined
+      if (movie && movie.id) {
         const response = await axios.get(
           `https://api.themoviedb.org/3/movie/${movie.id}/images?include_image_language=en,null&api_key=7f4278b49b0dad56afbecf67d0b4a002`
         );
@@ -45,8 +64,19 @@ const Movie = ({ movie, trailer, watchProviders }) => {
         setBackdrops(backdrops);
       }
     };
+
+    const fetchReviews = async () => {
+      if (movie && movie.id) {
+        const response = await axios.get(
+          `https://api.themoviedb.org/3/movie/${movie.id}/reviews?api_key=7f4278b49b0dad56afbecf67d0b4a002&language=en-US`
+        );
+        setReviews(response.data.results);
+      }
+    };
+
     fetchBackdrops();
-  }, [movie]); // Depend on movie object
+    fetchReviews();
+  }, [movie]);
 
   const renderProviders = (providers, title) => {
     if (!providers || providers.length === 0) return null;
@@ -105,16 +135,14 @@ const Movie = ({ movie, trailer, watchProviders }) => {
               </div>
             </div>
           </div>
-          <h1 className="font-bold text-xl ml-5 text-primary-light  mt-6 my-2">
-            Movie trailer:
-          </h1>
-          <div className="relative w-full" style={{ paddingTop: '56.25%' }}> {/* 16:9 Aspect Ratio */}
+          <h1 className="font-bold text-xl ml-5 text-primary-light mt-6 my-2">Movie trailer:</h1>
+          <div className="relative w-full" style={{ paddingTop: '56.25%' }}>
             {trailer && trailer.key ? (
               <ReactPlayer
                 url={`https://www.youtube.com/watch?v=${trailer.key}`}
                 width="100%"
-                height="100%" // Set height to 100% to fill the wrapper
-                style={{ position: 'absolute', top: 0, left: 0 }} // Positioning to fill the wrapper
+                height="100%"
+                style={{ position: 'absolute', top: 0, left: 0 }}
                 controls
               />
             ) : (
@@ -145,8 +173,47 @@ const Movie = ({ movie, trailer, watchProviders }) => {
               </span>
             </button>
           </div>
+          <div className="p-6">
+            <h2 className="text-2xl font-semibold text-primary-light mb-4">User Reviews</h2>
+            {reviews.length > 0 ? (
+              reviews.slice(0, visibleReviews).map((review) => (
+                <button
+                  key={review.id}
+                  className="mb-4 p-4 border border-gray-700 rounded-lg bg-gradient-to-r from-slate-800 to-neutral-600 shadow-lg transition-transform transform hover:scale-105 w-full text-left"
+                  onClick={() => openModal(review)}
+                >
+                  <h3 className="font-bold text-white text-lg">{review.author}</h3>
+                  <p className="text-gray-200 mb-2">
+                    {review.content.length > 100 ? review.content.substring(0, 100) + '...' : review.content}
+                  </p>
+                  <div className="flex items-center">
+                    <span className="text-yellow-400 mr-1">{'★'.repeat(Math.round(review.rating || 0))}</span>
+                    <span className="text-gray-300 text-sm">({review.rating ? review.rating.toFixed(1) : 'N/A'})</span>
+                  </div>
+                </button>
+              ))
+            ) : (
+              <p className="text-white">No reviews available for this movie.</p>
+            )}
+            {visibleReviews < reviews.length && (
+              <button
+                onClick={loadMoreReviews}
+                className="mt-4 px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark"
+              >
+                Load More
+              </button>
+            )}
+          </div>
         </div>
       </div>
+      <ReviewModal isOpen={isModalOpen} onClose={closeModal} review={selectedReview} />
+      {/* Back Button Added Here */}
+      <button
+        onClick={handleGoBack}
+        className="fixed bottom-4 right-4 bg-primary text-white p-3 rounded-full shadow-lg hover:bg-primary-dark transition"
+      >
+        Go Back
+      </button>
     </div>
   );
 };
@@ -158,16 +225,11 @@ export async function getServerSideProps({ params }) {
     const { id } = params;
 
     const movieRes = await axios.get(`${API_URL}/movie/${id}?api_key=${API_KEY}&language=en-US`);
-    const certificationRes = await axios.get(`${API_URL}/movie/${id}/release_dates?api_key=${API_KEY}`);
     const trailerRes = await axios.get(`${API_URL}/movie/${id}/videos?api_key=${API_KEY}&language=en-US`);
     const watchProvidersResponse = await axios.get(`${API_URL}/movie/${id}/watch/providers?api_key=${API_KEY}`);
     const watchProviders = watchProvidersResponse.data;
 
     const movie = movieRes.data;
-    const releaseDates = certificationRes.data.results;
-    const usRelease = releaseDates.find(r => r.iso_3166_1 === "US");
-    const certification = usRelease && usRelease.release_dates[0] ? usRelease.release_dates[0].certification : "Not Rated";
-
     const trailers = trailerRes.data.results;
     const trailer = trailers.find(video => video.type === "Trailer") || null;
 
