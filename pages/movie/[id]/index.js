@@ -149,30 +149,7 @@ const Movie = ({ movie, trailer, watchProviders }) => {
               <p className="text-white text-sm">Trailer not available.</p>
             )}
           </div>
-          <div className="mt-8 mb-10 flex justify-center">
-            <button
-              onClick={handleGoBack}
-              className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-primary to-secondary p-0.5 text-sm font-medium text-white hover:text-white focus:outline-none focus:ring-4 focus:ring-primary"
-            >
-              <span className="relative flex items-center space-x-2 rounded-full bg-background px-28 py-2.5 transition-all duration-75 ease-in group-hover:bg-opacity-0">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  className="h-5 w-5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                  />
-                </svg>
-                <span>Go back</span>
-              </span>
-            </button>
-          </div>
+
           <div className="p-6">
             <h2 className="text-2xl font-semibold text-primary-light mb-4">User Reviews</h2>
             {reviews.length > 0 ? (
@@ -195,25 +172,27 @@ const Movie = ({ movie, trailer, watchProviders }) => {
             ) : (
               <p className="text-white">No reviews available for this movie.</p>
             )}
-            {visibleReviews < reviews.length && (
+            <div className="flex justify-between mt-4">
+              {visibleReviews < reviews.length && (
+                <button
+                  onClick={loadMoreReviews}
+                  className="px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark"
+                >
+                  Load More
+                </button>
+              )}
+              {/* Back Button Aligned to the Right Below Reviews */}
               <button
-                onClick={loadMoreReviews}
-                className="mt-4 px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark"
+                onClick={handleGoBack}
+                className="bg-primary text-white p-4 rounded-full shadow-lg hover:bg-primary-dark transition text-lg"
               >
-                Load More
+                Go Back
               </button>
-            )}
+            </div>
           </div>
         </div>
       </div>
       <ReviewModal isOpen={isModalOpen} onClose={closeModal} review={selectedReview} />
-      {/* Back Button Added Here */}
-      <button
-        onClick={handleGoBack}
-        className="fixed bottom-4 right-4 bg-primary text-white p-3 rounded-full shadow-lg hover:bg-primary-dark transition"
-      >
-        Go Back
-      </button>
     </div>
   );
 };
