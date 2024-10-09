@@ -4,17 +4,22 @@ import { FaStar } from 'react-icons/fa';
 
 const MovieCard = ({ movie }) => {
   const rating = movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A';
+  const posterUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
 
   return (
     <Link href={`/movie/${movie.id}`} shallow={true}>
       <div className="bg-gradient-to-br from-background-light to-background rounded-xl overflow-hidden shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl flex flex-col w-full h-full border border-gray-800">
         <div className="relative w-full pb-[150%]">
           <Image
-            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+            src={posterUrl}
             alt={movie.title}
             layout="fill"
             objectFit="cover"
             className="transition-opacity duration-300"
+            onError={(e) => {
+              e.target.onerror = null; // prevents looping
+              e.target.src = '/path/to/placeholder/image.jpg'; // fallback image
+            }}
           />
           <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-70 transition-all duration-300 flex items-center justify-center opacity-0 hover:opacity-100">
             <p className="text-white text-center px-4 py-2 hover:cursor-pointer bg-primary rounded-full text-sm font-bold">
