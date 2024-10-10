@@ -10,82 +10,15 @@ import ReviewModal from '../../../components/ReviewModal';
 
 const BACKDROP_BASE_URL = "https://image.tmdb.org/t/p/original";
 
-const Movie = ({ movieId }) => {
+const Movie = ({ movie, trailer, watchProviders }) => {
   const router = useRouter();
   const [showPlayer, setShowPlayer] = useState(false);
   const [backdrops, setBackdrops] = useState([]);
   const [nextCardVisible, setNextCardVisible] = useState(false);
   const [reviews, setReviews] = useState([]);
-  const [selectedReview, setSelectedReview] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [visibleReviews, setVisibleReviews] = useState(3);
-  const [movie, setMovie] = useState(null);
-  const [trailer, setTrailer] = useState(null);
-  const [watchProviders, setWatchProviders] = useState(null);
-
-  useEffect(() => {
-    const fetchMovieData = async () => {
-      const cachedMovie = localStorage.getItem(`movie_${movieId}`);
-      if (cachedMovie) {
-        const { movie, trailer, watchProviders } = JSON.parse(cachedMovie);
-        setMovie(movie);
-        setTrailer(trailer);
-        setWatchProviders(watchProviders);
-      } else {
-        try {
-          const API_URL = process.env.API_URL || 'https://api.themoviedb.org/3';
-          const API_KEY = process.env.API_KEY ||  '7f4278b49b0dad56afbecf67d0b4a002'
-
-          const movieRes = await axios.get(`${API_URL}/movie/${movieId}?api_key=${API_KEY}&language=en-US`);
-          const trailerRes = await axios.get(`${API_URL}/movie/${movieId}/videos?api_key=${API_KEY}&language=en-US`);
-          const watchProvidersResponse = await axios.get(`${API_URL}/movie/${movieId}/watch/providers?api_key=${API_KEY}`);
-
-          const movieData = movieRes.data;
-          const trailers = trailerRes.data.results;
-          const trailerData = trailers.find(video => video.type === "Trailer") || null;
-
-          setMovie(movieData);
-          setTrailer(trailerData);
-          setWatchProviders(watchProvidersResponse.data);
-
-          // Cache the movie data in local storage
-          localStorage.setItem(`movie_${movieId}`, JSON.stringify({ movie: movieData, trailer: trailerData, watchProviders: watchProvidersResponse.data }));
-        } catch (error) {
-          console.error('Error fetching movie data:', error);
-        }
-      }
-    };
-
-    fetchMovieData();
-  }, [movieId]);
-
-  useEffect(() => {
-    const fetchBackdrops = async () => {
-      if (movie && movie.id) {
-        const response = await axios.get(
-          `https://api.themoviedb.org/3/movie/${movie.id}/images?include_image_language=en,null&api_key=7f4278b49b0dad56afbecf67d0b4a002`
-        );
-        const backdrops = response.data.backdrops.map(
-          (backdrop) => `${BACKDROP_BASE_URL}${backdrop.file_path}`
-        );
-        setBackdrops(backdrops);
-      }
-    };
-
-    const fetchReviews = async () => {
-      if (movie && movie.id) {
-        const response = await axios.get(
-          `https://api.themoviedb.org/3/movie/${movie.id}/reviews?api_key=7f4278b49b0dad56afbecf67d0b4a002&language=en-US`
-        );
-        setReviews(response.data.results);
-      }
-    };
-
-    if (movie) {
-      fetchBackdrops();
-      fetchReviews();
-    }
-  }, [movie]);
+  const [selectedReview, setSelectedReview] = useState(null); // State for the selected review
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+  const [visibleReviews, setVisibleReviews] = useState(3); // State to control the number of visible reviews
 
   const handlePlay = () => {
     setShowPlayer(true);
@@ -116,8 +49,34 @@ const Movie = ({ movieId }) => {
   };
 
   const loadMoreReviews = () => {
-    setVisibleReviews((prev) => prev + 3);
+    setVisibleReviews((prev) => prev + 3); // Increase the number of visible reviews by 3
   };
+
+  useEffect(() => {
+    const fetchBackdrops = async () => {
+      if (movie && movie.id) {
+        const response = await axios.get(
+          `https://api.themoviedb.org/3/movie/${movie.id}/images?include_image_language=en,null&api_key=7f4278b49b0dad56afbecf67d0b4a002`
+        );
+        const backdrops = response.data.backdrops.map(
+          (backdrop) => `${BACKDROP_BASE_URL}${backdrop.file_path}`
+        );
+        setBackdrops(backdrops);
+      }
+    };
+
+    const fetchReviews = async () => {
+      if (movie && movie.id) {
+        const response = await axios.get(
+          `https://api.themoviedb.org/3/movie/${movie.id}/reviews?api_key=7f4278b49b0dad56afbecf67d0b4a002&language=en-US`
+        );
+        setReviews(response.data.results);
+      }
+    };
+
+    fetchBackdrops();
+    fetchReviews();
+  }, [movie]);
 
   const renderProviders = (providers, title) => {
     if (!providers || providers.length === 0) return null;
@@ -144,16 +103,16 @@ const Movie = ({ movieId }) => {
 
   return (
     <div className="bg-gradient-to-b from-background to-background-dark min-h-screen py-12">
-      <Meta title={movie?.title} />
+      <Meta title={movie.title} />
       <div className="container max-w-6xl mx-auto px-4">
         <div className="bg-background-light rounded-xl overflow-hidden shadow-2xl">
           <div className="relative h-96">
             <Slider slides={backdrops} />
             <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
             <div className="absolute bottom-0 left-0 p-6">
-              <h1 className="text-4xl font-bold text-white mb-2">{movie?.title}</h1>
+              <h1 className="text-4xl font-bold text-white mb-2">{movie.title}</h1>
               <p className="text-gray-300 text-sm">
-                {movie?.release_date} | {movie?.genres?.map((genre) => genre.name).join(", ")}
+                {movie.release_date} | {movie.genres.map((genre) => genre.name).join(", ")}
               </p>
             </div>
           </div>
@@ -161,7 +120,7 @@ const Movie = ({ movieId }) => {
             <div className="flex flex-col md:flex-row gap-8">
               <div className="md:w-2/3">
                 <h2 className="text-2xl font-semibold text-primary-light mb-4">Overview</h2>
-                <p className="text-gray-300 mb-6">{movie?.overview}</p>
+                <p className="text-gray-300 mb-6">{movie.overview}</p>
                 <h2 className="text-2xl font-semibold text-primary-light mb-4">Where to Watch</h2>
                 {watchProviders && watchProviders.results && watchProviders.results.US ? (
                   <>
@@ -224,6 +183,7 @@ const Movie = ({ movieId }) => {
                   Load More
                 </button>
               )}
+              {/* Back Button Aligned to the Right Below Reviews */}
               <button
                 onClick={handleGoBack}
                 className="bg-primary text-white p-4 rounded-full shadow-lg hover:bg-primary-dark transition text-lg"
@@ -240,9 +200,29 @@ const Movie = ({ movieId }) => {
 };
 
 export async function getServerSideProps({ params }) {
-  return {
-    props: { movieId: params.id }
-  };
+  try {
+    const API_URL = process.env.API_URL || 'https://api.themoviedb.org/3';
+    const API_KEY = process.env.API_KEY;
+    const { id } = params;
+
+    const movieRes = await axios.get(`${API_URL}/movie/${id}?api_key=${API_KEY}&language=en-US`);
+    const trailerRes = await axios.get(`${API_URL}/movie/${id}/videos?api_key=${API_KEY}&language=en-US`);
+    const watchProvidersResponse = await axios.get(`${API_URL}/movie/${id}/watch/providers?api_key=${API_KEY}`);
+    const watchProviders = watchProvidersResponse.data;
+
+    const movie = movieRes.data;
+    const trailers = trailerRes.data.results;
+    const trailer = trailers.find(video => video.type === "Trailer") || null;
+
+    return {
+      props: { movie, trailer, watchProviders }
+    };
+  } catch (error) {
+    console.error('Error fetching movie data:', error);
+    return {
+      props: { movie: null, trailer: null, watchProviders: null, error: error.message }
+    };
+  }
 }
 
 export default Movie;
