@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { server } from '../config';
 import Link from 'next/link';
-import Image from 'next/image';
 import Slider from 'react-slick';
-
-// Import css files for react-slick
+import MovieCard from './MovieCard'; // Ensure this import is correct
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -70,19 +68,8 @@ const TopPicksSuggester = () => {
       <Slider {...settings}>
         {topPicks.map((movie) => (
           <div key={movie.id} className="px-3">
-            <Link href={`/movie/${movie.id}`}>
-              <a className="block relative group">
-                <div className="transition-all duration-300 transform group-hover:scale-110 group-hover:z-10">
-                  <Image
-                    src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`}
-                    alt={movie.title}
-                    width={300}
-                    height={450}
-                    className="rounded-lg shadow-md"
-                  />
-                  <p className="mt-3 text-center text-lg font-semibold truncate group-hover:text-red-500">{movie.title}</p>
-                </div>
-              </a>
+            <Link href={`/movie/${movie.id}`} passHref>
+              <MovieCard movie={movie} />
             </Link>
           </div>
         ))}

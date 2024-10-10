@@ -58,9 +58,9 @@ const Movie = ({ movie, trailer, watchProviders }) => {
         const response = await axios.get(
           `https://api.themoviedb.org/3/movie/${movie.id}/images?include_image_language=en,null&api_key=7f4278b49b0dad56afbecf67d0b4a002`
         );
-        const backdrops = response.data.backdrops.map(
-          (backdrop) => `${BACKDROP_BASE_URL}${backdrop.file_path}`
-        );
+        const backdrops = response.data.backdrops
+          .slice(0, 3) // Limit to 3 backdrops
+          .map((backdrop) => `${BACKDROP_BASE_URL}${backdrop.file_path}`);
         setBackdrops(backdrops);
       }
     };
@@ -70,7 +70,8 @@ const Movie = ({ movie, trailer, watchProviders }) => {
         const response = await axios.get(
           `https://api.themoviedb.org/3/movie/${movie.id}/reviews?api_key=7f4278b49b0dad56afbecf67d0b4a002&language=en-US`
         );
-        setReviews(response.data.results);
+        const limitedReviews = response.data.results.slice(0, 5); // Limit to 5 reviews
+        setReviews(limitedReviews);
       }
     };
 
@@ -125,9 +126,8 @@ const Movie = ({ movie, trailer, watchProviders }) => {
                 {watchProviders && watchProviders.results && watchProviders.results.US ? (
                   <>
                     {renderProviders(watchProviders.results.US.flatrate, "Stream")}
-                    {renderProviders(watchProviders.results.US.rent, "Rent")}
                     {renderProviders(watchProviders.results.US.buy, "Buy")}
-                    {!watchProviders.results.US.flatrate && !watchProviders.results.US.rent && !watchProviders.results.US.buy && (
+                    {!watchProviders.results.US.flatrate && !watchProviders.results.US.buy && (
                       <p className="text-white text-sm">No streaming options found.</p>
                     )}
                   </>
@@ -161,13 +161,13 @@ const Movie = ({ movie, trailer, watchProviders }) => {
                   className="mb-4 p-4 border border-gray-700 rounded-lg bg-gradient-to-r from-slate-800 to-neutral-600 shadow-lg transition-transform transform hover:scale-105 w-full text-left"
                   onClick={() => openModal(review)}
                 >
-                  <h3 className="font-bold text-white text-lg">{review.author}</h3>
+                  <h3 className="font-bold text-blue-700 text-lg">{review.author}</h3>
                   <p className="text-gray-200 mb-2">
                     {review.content.length > 100 ? review.content.substring(0, 100) + '...' : review.content}
                   </p>
                   <div className="flex items-center">
                     <span className="text-yellow-400 mr-1">{'★'.repeat(Math.round(review.rating || 0))}</span>
-                    <span className="text-gray-300 text-sm">({review.rating ? review.rating.toFixed(1) : 'N/A'})</span>
+                    <span className="text-gray-300 text-sm mt-3">Read more</span>
                   </div>
                 </button>
               ))
