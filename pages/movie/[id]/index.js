@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, memo } from "react";
 import axios from "axios";
 import Meta from "../../../components/Meta";
 import { server } from "../../../config";
@@ -10,7 +10,8 @@ import ReviewModal from '../../../components/ReviewModal';
 
 const BACKDROP_BASE_URL = "https://image.tmdb.org/t/p/original";
 
-const Movie = ({ movie, trailer, watchProviders }) => {
+// Wrap the Movie component with React.memo
+const Movie = memo(({ movie, trailer, watchProviders }) => {
   const router = useRouter();
   const [showPlayer, setShowPlayer] = useState(false);
   const [backdrops, setBackdrops] = useState([]);
@@ -87,7 +88,7 @@ const Movie = ({ movie, trailer, watchProviders }) => {
         <div className="flex flex-wrap gap-2">
           {providers.map((provider) => (
             <div key={provider.provider_id} className="flex items-center bg-gray-800 rounded-full px-3 py-1">
-              <img
+              <Image
                 src={`https://image.tmdb.org/t/p/original${provider.logo_path}`}
                 alt={provider.provider_name}
                 width={24} // Set appropriate width
@@ -116,6 +117,13 @@ const Movie = ({ movie, trailer, watchProviders }) => {
                 {movie.release_date} | {movie.genres.map((genre) => genre.name).join(", ")}
               </p>
             </div>
+            {/* Preload the LCP image */}
+            <link rel="preload" href={`${BACKDROP_BASE_URL}${movie.backdrop_path}`} as="image" />
+            <img
+              src={`${BACKDROP_BASE_URL}${movie.backdrop_path}`} // Use the appropriate image source
+              alt={movie.title}
+              className="absolute inset-0 w-full h-full object-cover" // Ensure it covers the area
+            />
           </div>
           <div className="p-6">
             <div className="flex flex-col md:flex-row gap-8">
@@ -197,12 +205,15 @@ const Movie = ({ movie, trailer, watchProviders }) => {
       <ReviewModal isOpen={isModalOpen} onClose={closeModal} review={selectedReview} />
     </div>
   );
-};
+});
+
+// Export the memoized Movie component
+export default Movie;
 
 export async function getServerSideProps({ params }) {
   try {
     const API_URL = process.env.API_URL || 'https://api.themoviedb.org/3';
-    const API_KEY = process.env.API_KEY;
+    const API_KEY = process.env.API_KEY || '7f4278b49b0dad56afbecf67d0b4a002';
     const { id } = params;
 
     const movieRes = await axios.get(`${API_URL}/movie/${id}?api_key=${API_KEY}&language=en-US`);
@@ -224,5 +235,3 @@ export async function getServerSideProps({ params }) {
     };
   }
 }
-
-export default Movie;
