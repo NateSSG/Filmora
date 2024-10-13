@@ -3,7 +3,7 @@ import axios from "axios";
 import Meta from "../../../components/Meta";
 import { server } from "../../../config";
 import { useRouter } from "next/router";
-import ReactPlayer from "react-player";
+import YouTubeFacade from '../../../components/YouTubeFacade'; // Correct import
 import Slider from "../../../components/Slider";
 import Image from "next/image";
 import ReviewModal from '../../../components/ReviewModal';
@@ -138,15 +138,9 @@ const Movie = ({ movie, trailer, watchProviders }) => {
             </div>
           </div>
           <h1 className="font-bold text-xl ml-5 text-primary-light mt-6 my-2">Movie trailer:</h1>
-          <div className="relative w-full" style={{ paddingTop: '56.25%' }}>
+          <div className="relative w-full" style={{ paddingTop: '1%' }}>
             {trailer && trailer.key ? (
-              <ReactPlayer
-                url={`https://www.youtube.com/watch?v=${trailer.key}`}
-                width="100%"
-                height="100%"
-                style={{ position: 'absolute', top: 0, left: 0 }}
-                controls
-              />
+              <YouTubeFacade videoId={trailer.key} />
             ) : (
               <p className="text-white text-sm">Trailer not available.</p>
             )}
