@@ -12,7 +12,9 @@ const Home = () => {
     const fetchRandomMovies = async () => {
       try {
         const response = await axios.get("/api/movies?page=1");
-        const shuffledMovies = response.data.results.sort(() => 0.5 - Math.random());
+        const shuffledMovies = response.data.results.sort(
+          () => 0.5 - Math.random()
+        );
         setRandomMovies(shuffledMovies.slice(0, 3)); // Get 3 random movies
         setLoading(false);
       } catch (error) {
@@ -62,9 +64,9 @@ const Home = () => {
           </div>
           <div className="text-center mt-8">
             <Link href="/all">
-              <button className="bg-primary-light hover:bg-red-700 text-white py-3 px-6 rounded-full text-lg mt-6 font-bold transition duration-300 ease-in-out transform hover:scale-105">
+              <a className="bg-primary-light hover:bg-red-700 text-white py-3 px-6 rounded-full text-lg mt-6 font-bold transition duration-300 ease-in-out transform hover:scale-105 inline-block">
                 EXPLORE
-              </button>
+              </a>
             </Link>
           </div>
         </section>
