@@ -1,4 +1,4 @@
-import React, { useEffect, useState, memo } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Meta from "../../../components/Meta";
 import { server } from "../../../config";
@@ -10,8 +10,7 @@ import ReviewModal from '../../../components/ReviewModal';
 
 const BACKDROP_BASE_URL = "https://image.tmdb.org/t/p/original";
 
-// Wrap the Movie component with React.memo
-const Movie = memo(({ movie, trailer, watchProviders }) => {
+const Movie = ({ movie, trailer, watchProviders }) => {
   const router = useRouter();
   const [showPlayer, setShowPlayer] = useState(false);
   const [backdrops, setBackdrops] = useState([]);
@@ -117,13 +116,6 @@ const Movie = memo(({ movie, trailer, watchProviders }) => {
                 {movie.release_date} | {movie.genres.map((genre) => genre.name).join(", ")}
               </p>
             </div>
-            {/* Preload the LCP image */}
-            <link rel="preload" href={`${BACKDROP_BASE_URL}${movie.backdrop_path}`} as="image" />
-            <img
-              src={`${BACKDROP_BASE_URL}${movie.backdrop_path}`} // Use the appropriate image source
-              alt={movie.title}
-              className="absolute inset-0 w-full h-full object-cover" // Ensure it covers the area
-            />
           </div>
           <div className="p-6">
             <div className="flex flex-col md:flex-row gap-8">
@@ -169,7 +161,7 @@ const Movie = memo(({ movie, trailer, watchProviders }) => {
                   className="mb-4 p-4 border border-gray-700 rounded-lg bg-gradient-to-r from-slate-800 to-neutral-600 shadow-lg transition-transform transform hover:scale-105 w-full text-left"
                   onClick={() => openModal(review)}
                 >
-                  <h3 className="font-bold text-blue-700 text-lg">{review.author}</h3>
+                  <h3 className="font-bold text-blue-400 text-lg">{review.author}</h3>
                   <p className="text-gray-200 mb-2">
                     {review.content.length > 100 ? review.content.substring(0, 100) + '...' : review.content}
                   </p>
@@ -205,10 +197,7 @@ const Movie = memo(({ movie, trailer, watchProviders }) => {
       <ReviewModal isOpen={isModalOpen} onClose={closeModal} review={selectedReview} />
     </div>
   );
-});
-
-// Set the display name for the Movie component
-Movie.displayName = "Movie";
+};
 
 export async function getServerSideProps({ params }) {
   try {

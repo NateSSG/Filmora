@@ -1,17 +1,14 @@
 import Link from "next/link";
 import { TypeAnimation } from "react-type-animation";
-import Image from "next/image";
 
 const Hero = () => {
   return (
     <div className="text-center relative">
       <div className="w-full h-96 relative">
-        <Image
-          src="/hero-cinema.svg"
+        <img
+          src="/hero-cinema.svg" // Use WebP format for better compression
           alt="Cinema background"
-          layout="fill"
-          objectFit="cover"
-          className="brightness-50"
+          className="absolute inset-0 w-full h-full object-cover brightness-50"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
       </div>
