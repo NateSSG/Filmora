@@ -62,9 +62,9 @@ const Home = () => {
           </div>
           <div className="text-center mt-8">
             <Link href="/all">
-              <a className="bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200 inline-flex items-center">
-                View All Movies
-              </a>
+              <button className="bg-primary-light hover:bg-red-700 text-white py-3 px-6 rounded-full text-lg mt-6 font-bold transition duration-300 ease-in-out transform hover:scale-105">
+                EXPLORE
+              </button>
             </Link>
           </div>
         </section>
