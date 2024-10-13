@@ -7,40 +7,30 @@ const MovieCard = ({ movie }) => {
 
   return (
     <Link href={`/movie/${movie.id}`} shallow={true}>
-      <div className="bg-gradient-to-br from-background-light to-background rounded-xl overflow-hidden shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl flex flex-col w-full h-full border border-gray-800">
-        <div className="relative w-full h-96"> {/* Set a fixed height */}
+      <div className="bg-gray-800 rounded-xl overflow-hidden shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl flex flex-col w-full border border-gray-700">
+        <div className="relative w-full h-[500px] md:h-[550px]"> {/* Increased height for the poster */}
           <img
             src={posterUrl}
             alt={movie.title}
-            width={500} // Specify the width here
-            height={900} // Specify the height here (adjust as necessary)
             className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
             onError={(e) => {
-              e.target.onerror = null; // prevents looping
-              e.target.src = '/path/to/placeholder/image.jpg'; // fallback image
+              e.target.onerror = null;
+              e.target.src = '/path/to/placeholder/image.jpg'; // Fallback image
             }}
           />
-          <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-70 transition-all duration-300 flex items-center justify-center opacity-0 hover:opacity-100">
-            <p className="text-white text-center px-4 py-2 hover:cursor-pointer bg-primary rounded-full text-sm font-bold">
+          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300">
+            <p className="text-white text-center px-4 py-2 bg-primary rounded-full text-sm font-bold">
               View Details
             </p>
           </div>
         </div>
-        <div className="p-2 flex-grow flex flex-col justify-between">
-          <div>
-            <h3 className="text-lg font-semibold text-white line-clamp-2 mb-1">{movie.title}</h3>
-            <p className="text-sm text-gray-400">
-              {new Date(movie.release_date).getFullYear()}
-            </p>
-          </div>
-          <div className="mt-1">
-            <div className="flex items-center">
-              <div className="flex items-center mr-1">
-                <FaStar className="text-yellow-400 mr-1" />
-                <span className="text-white font-bold">{rating}</span>
-              </div>
-              <span className="text-gray-400 text-sm">/ 10</span>
-            </div>
+        <div className="p-4 flex flex-col">
+          <h3 className="text-lg font-semibold text-white line-clamp-2 mb-2">{movie.title}</h3>
+          <p className="text-sm text-gray-400 mb-1">{new Date(movie.release_date).getFullYear()}</p>
+          <div className="flex items-center">
+            <FaStar className="text-yellow-400 mr-1" />
+            <span className="text-white font-bold">{rating}</span>
+            <span className="text-gray-400 text-sm">/ 10</span>
           </div>
         </div>
       </div>
