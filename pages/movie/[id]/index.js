@@ -113,7 +113,7 @@ const Movie = memo(({ movie, trailer, watchProviders }) => {
             <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
             <div className="absolute bottom-0 left-0 p-6">
               <h1 className="text-4xl font-bold text-white mb-2">{movie.title}</h1>
-              <p className="text-gray-300 text-sm">
+              <p className="text-gray-400 text-sm">
                 {movie.release_date} | {movie.genres.map((genre) => genre.name).join(", ")}
               </p>
             </div>
