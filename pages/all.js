@@ -1,24 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import validateApiRequest from '../utils/validator'; // Import the validator
 import MovieCard from '../components/MovieCard';
 import Meta from '../components/Meta';
 import Slider from 'react-slick';
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/solid';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useRouter } from 'next/router';
 
 const AllMovies = () => {
   const [allMovies, setAllMovies] = useState([]);
-  const [displayedMovies, setDisplayedMovies] = useState([]); // New state for displayed movies
+  const [displayedMovies, setDisplayedMovies] = useState([]);
   const [categorizedMovies, setCategorizedMovies] = useState({});
   const [genres, setGenres] = useState([]);
   const [selectedGenre, setSelectedGenre] = useState(null);
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
-  // Slider settings for react-slick
   const sliderSettings = {
     dots: true,
     infinite: true,
@@ -26,71 +22,40 @@ const AllMovies = () => {
     slidesToShow: 4,
     slidesToScroll: 1,
     responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 3,
-          slidesToScroll: 1,
-          infinite: true,
-          dots: true,
-        },
-      },
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
-        },
-      },
-      {
-        breakpoint: 480,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-        },
-      },
+      { breakpoint: 1024, settings: { slidesToShow: 3 } },
+      { breakpoint: 768, settings: { slidesToShow: 2 } },
+      { breakpoint: 480, settings: { slidesToShow: 1 } },
     ],
   };
 
   useEffect(() => {
-    fetchMovies();
-    fetchGenres();
+    const fetchMoviesAndGenres = async () => {
+      setLoading(true);
+      try {
+        const [moviesResponse, genresResponse] = await Promise.all([
+          axios.get('/api/movies'),
+          axios.get('/api/genres'),
+        ]);
+        setAllMovies(moviesResponse.data.results);
+        setGenres(genresResponse.data.genres);
+        setDisplayedMovies(moviesResponse.data.results.slice(0, 10)); // Display only 10 initially
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMoviesAndGenres();
   }, []);
-
-  const fetchMovies = async () => {
-    if (loading) return;
-    setLoading(true);
-    try {
-      const response = await axios.get('/api/movies');
-      setAllMovies(response.data.results); // Store all fetched movies
-      setDisplayedMovies(response.data.results); // Set displayed movies to all initially
-    } catch (error) {
-      console.error('Error fetching movies:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchGenres = async () => {
-    try {
-      const response = await axios.get('/api/genres');
-      setGenres(response.data.genres);
-    } catch (error) {
-      console.error('Error fetching genres:', error);
-    }
-  };
 
   const handleGenreSelect = async (genreId) => {
     setSelectedGenre(genreId);
     if (genreId === null) {
-      // If "All" is selected, display random movies from all genres
-      const randomMovies = getRandomMovies(allMovies, 10); // Change 10 to the number of random movies you want
-      setDisplayedMovies(randomMovies);
+      setDisplayedMovies(getRandomMovies(allMovies, 10));
     } else if (categorizedMovies[genreId]) {
-      // If movies for the selected genre are already fetched, use them
       setDisplayedMovies(categorizedMovies[genreId]);
     } else {
-      // Fetch movies for the selected genre if not already fetched
       const response = await axios.get(`/api/movies/genre/${genreId}`);
       setCategorizedMovies(prev => ({ ...prev, [genreId]: response.data.results }));
       setDisplayedMovies(response.data.results);
@@ -98,9 +63,27 @@ const AllMovies = () => {
   };
 
   const getRandomMovies = (movies, count) => {
-    const shuffled = movies.sort(() => 0.5 - Math.random());
+    if (movies.length === 0) return [];
+    const shuffled = [...movies].sort(() => 0.5 - Math.random());
     return shuffled.slice(0, count);
   };
+
+  const preloadImages = () => {
+    const imagesToPreload = displayedMovies.slice(0, 3).map(movie => `https://image.tmdb.org/t/p/w500${movie.poster_path}`);
+    imagesToPreload.forEach(src => {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'image';
+      link.href = src;
+      document.head.appendChild(link);
+    });
+  };
+
+  useEffect(() => {
+    if (displayedMovies.length > 0) {
+      preloadImages();
+    }
+  }, [displayedMovies]);
 
   return (
     <div className="bg-gradient-to-b from-gray-900 to-black min-h-screen">
@@ -127,14 +110,17 @@ const AllMovies = () => {
             ))}
           </div>
         </div>
-        <Slider {...sliderSettings} className="movie-slider">
-          {displayedMovies.map(movie => (
-            <div key={movie.id} className="px-2">
-              <MovieCard movie={movie} />
-            </div>
-          ))}
-        </Slider>
-        {loading && <p className="text-center mt-8 text-accent">Loading...</p>}
+        {loading ? (
+          <p className="text-center mt-8 text-accent">Loading movies...</p>
+        ) : (
+          <Slider {...sliderSettings} className="movie-slider">
+            {displayedMovies.map(movie => (
+              <div key={movie.id} className="px-2">
+                <MovieCard movie={movie} />
+              </div>
+            ))}
+          </Slider>
+        )}
       </div>
     </div>
   );

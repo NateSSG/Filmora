@@ -3,7 +3,6 @@ import Link from "next/link";
 import Meta from "../components/Meta";
 import Hero from "../components/Hero";
 import axios from "axios";
-import Image from "next/image";
 
 const Home = () => {
   const [randomMovies, setRandomMovies] = useState([]);
@@ -40,7 +39,7 @@ const Home = () => {
           <p className="text-xl mb-8">
             Explore a selection of random movies that you might love!
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="flex flex-col md:flex-row md:justify-between md:gap-8">
             {loading ? (
               <div className="flex justify-center items-center h-64">
                 <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-primary-light"></div>
@@ -48,7 +47,7 @@ const Home = () => {
             ) : (
               randomMovies.map((movie) => (
                 <Link key={movie.id} href={`/movie/${movie.id}`} passHref>
-                  <div className="relative cursor-pointer">
+                  <div className="flex justify-center mb-4 md:mb-0 cursor-pointer">
                     <img
                       src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                       alt={movie.title}
