@@ -6,7 +6,7 @@ const Hero = () => {
     <div className="text-center relative">
       <div className="w-full h-96 relative">
         <img
-          src="/hero-cinema.svg" // Use WebP format for better compression
+          src="/hero-cinema.svg"
           alt="Cinema background"
           className="absolute inset-0 w-full h-full object-cover brightness-50"
         />
@@ -28,10 +28,12 @@ const Hero = () => {
           style={{ fontSize: "2.5em", fontWeight: "bold", color: "white" }}
         />
         <p className="text-primary-light text-xl mt-4 font-bold">Explore the world of cinema with us.</p>
-        <Link href="/all" passHref>
-          <button className="bg-primary-light hover:bg-red-700 text-white py-3 px-6 rounded-full text-lg mt-6 font-bold transition duration-300 ease-in-out transform hover:scale-105">
-            EXPLORE MOVIES
-          </button>
+        <Link href="/all">
+          <a>
+            <button className="bg-primary-light hover:bg-red-700 text-white py-3 px-6 rounded-full text-lg mt-6 font-bold transition duration-300 ease-in-out transform hover:scale-105">
+              EXPLORE MOVIES
+            </button>
+          </a>
         </Link>
       </div>
     </div>
