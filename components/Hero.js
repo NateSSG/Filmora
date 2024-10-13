@@ -29,10 +29,8 @@ const Hero = () => {
         />
         <p className="text-primary-light text-xl mt-4 font-bold">Explore the world of cinema with us.</p>
         <Link href="/all">
-          <a>
-            <button className="bg-primary-light hover:bg-red-700 text-white py-3 px-6 rounded-full text-lg mt-6 font-bold transition duration-300 ease-in-out transform hover:scale-105">
-              EXPLORE MOVIES
-            </button>
+          <a className="bg-primary-light hover:bg-red-700 text-white py-3 px-6 rounded-full text-lg mt-6 font-bold transition duration-300 ease-in-out transform hover:scale-105 inline-block">
+            EXPLORE MOVIES
           </a>
         </Link>
       </div>
