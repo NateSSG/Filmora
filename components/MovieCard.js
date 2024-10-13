@@ -12,6 +12,8 @@ const MovieCard = ({ movie }) => {
           <img
             src={posterUrl}
             alt={movie.title}
+            width={500} // Specify the width here
+            height={900} // Specify the height here (adjust as necessary)
             className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
             onError={(e) => {
               e.target.onerror = null; // prevents looping
