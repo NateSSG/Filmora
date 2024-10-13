@@ -49,7 +49,7 @@ const Home = () => {
               randomMovies.map((movie) => (
                 <Link key={movie.id} href={`/movie/${movie.id}`} passHref>
                   <div className="relative cursor-pointer">
-                    <Image
+                    <img
                       src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                       alt={movie.title}
                       width={300}

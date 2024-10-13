@@ -1,9 +1,7 @@
 module.exports = {
   images: {
-    unoptimized: true, // Disable image optimization
+    unoptimized: true, // Disable image optimization if you want to use <img> instead
+    domains: ['image.tmdb.org'], // Add the new domain here
   },
   reactStrictMode: true,
-  images: {
-    domains: ['image.tmdb.org']
-  }// Other configurations can go here...
 };

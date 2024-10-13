@@ -9,13 +9,11 @@ const MovieCard = ({ movie }) => {
   return (
     <Link href={`/movie/${movie.id}`} shallow={true}>
       <div className="bg-gradient-to-br from-background-light to-background rounded-xl overflow-hidden shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl flex flex-col w-full h-full border border-gray-800">
-        <div className="relative w-full pb-[150%]">
-          <Image
-            src={posterUrl} // Use the Image component
+        <div className="relative w-full h-96"> {/* Set a fixed height */}
+          <img
+            src={posterUrl}
             alt={movie.title}
-            layout="fill" // Use layout fill for responsive images
-            objectFit="cover" // Maintain aspect ratio
-            className="transition-opacity duration-300"
+            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
             onError={(e) => {
               e.target.onerror = null; // prevents looping
               e.target.src = '/path/to/placeholder/image.jpg'; // fallback image
@@ -27,16 +25,16 @@ const MovieCard = ({ movie }) => {
             </p>
           </div>
         </div>
-        <div className="p-4 flex-grow flex flex-col justify-between">
+        <div className="p-2 flex-grow flex flex-col justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-white line-clamp-2 mb-2">{movie.title}</h3>
+            <h3 className="text-lg font-semibold text-white line-clamp-2 mb-1">{movie.title}</h3>
             <p className="text-sm text-gray-400">
               {new Date(movie.release_date).getFullYear()}
             </p>
           </div>
-          <div className="mt-2">
+          <div className="mt-1">
             <div className="flex items-center">
-              <div className="flex items-center mr-2">
+              <div className="flex items-center mr-1">
                 <FaStar className="text-yellow-400 mr-1" />
                 <span className="text-white font-bold">{rating}</span>
               </div>

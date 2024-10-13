@@ -87,7 +87,7 @@ const Movie = ({ movie, trailer, watchProviders }) => {
         <div className="flex flex-wrap gap-2">
           {providers.map((provider) => (
             <div key={provider.provider_id} className="flex items-center bg-gray-800 rounded-full px-3 py-1">
-              <Image
+              <img
                 src={`https://image.tmdb.org/t/p/original${provider.logo_path}`}
                 alt={provider.provider_name}
                 width={24} // Set appropriate width
